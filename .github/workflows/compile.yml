@@ -18,7 +18,7 @@ jobs:
         run: |
           git clone --depth 1 https://github.com/pawn-lang/samp-stdlib.git deps/samp-stdlib
           git clone --depth 1 https://github.com/pBlueG/SA-MP-MySQL.git deps/mysql
-          git clone --depth 1 https://github.com/Y-Less/foreach.git deps/foreach
+          git clone --depth 1 https://github.com/Y-Less/SAMP-foreach.git deps/foreach
           git clone --depth 1 https://github.com/Y-Less/sscanf.git deps/sscanf
           git clone --depth 1 https://github.com/samp-incognito/samp-streamer-plugin.git deps/streamer
           git clone --depth 1 https://github.com/katursis/Pawn.CMD.git deps/pawncmd
