@@ -18,7 +18,13 @@ jobs:
         run: |
           git clone --depth 1 https://github.com/pawn-lang/samp-stdlib.git deps/samp-stdlib
           git clone --depth 1 https://github.com/pawn-lang/compiler.git deps/pawn-compiler
-          git clone --depth 1 https://github.com/pBlueG/SA-MP-MySQL.git deps/mysql
+
+          # a_mysql.inc n'existe pas dans le depot git (fichier .in genere
+          # uniquement lors des releases) : on telecharge la release Linux.
+          MYSQL_URL=$(curl -s https://api.github.com/repos/pBlueG/SA-MP-MySQL/releases/latest | grep "browser_download_url.*linux-static.tar.gz" | cut -d '"' -f 4 | head -n1)
+          mkdir -p deps/mysql
+          wget -q "$MYSQL_URL" -O mysql.tar.gz
+          tar --strip-components=1 -xzf mysql.tar.gz -C deps/mysql
           git clone --depth 1 https://github.com/Y-Less/SAMP-foreach.git deps/foreach
           git clone --depth 1 https://github.com/Y-Less/sscanf.git deps/sscanf
           git clone --depth 1 https://github.com/samp-incognito/samp-streamer-plugin.git deps/streamer
@@ -37,15 +43,13 @@ jobs:
           ./pawnc-3.10.10-linux/bin/pawncc gamemodes/CRP.pwn \
             -i./deps/pawn-compiler/include \
             -i./deps/samp-stdlib \
-            -i./deps/mysql \
-            -i./deps/mysql/include \
+            -i./deps/mysql/pawno/include \
             -i./deps/foreach \
             -i./deps/sscanf \
             -i./deps/sscanf/include \
             -i./deps/streamer \
             -i./deps/streamer/include \
-            -i./deps/pawncmd \
-            -i./deps/pawncmd/include \
+            -i./deps/pawncmd/src \
             -i./deps/sampvoice \
             -i./deps/sampvoice/include \
             -i./deps/mselection \
