@@ -17,6 +17,7 @@ jobs:
       - name: Clone dependencies
         run: |
           git clone --depth 1 https://github.com/pawn-lang/samp-stdlib.git deps/samp-stdlib
+          git clone --depth 1 https://github.com/pawn-lang/compiler.git deps/pawn-compiler
           git clone --depth 1 https://github.com/pBlueG/SA-MP-MySQL.git deps/mysql
           git clone --depth 1 https://github.com/Y-Less/SAMP-foreach.git deps/foreach
           git clone --depth 1 https://github.com/Y-Less/sscanf.git deps/sscanf
@@ -34,6 +35,7 @@ jobs:
           LIBDIR=$(dirname $(find pawnc-3.10.10-linux -name "libpawnc*" | head -n1))
           export LD_LIBRARY_PATH=$LIBDIR:$LD_LIBRARY_PATH
           ./pawnc-3.10.10-linux/bin/pawncc gamemodes/CRP.pwn \
+            -i./deps/pawn-compiler/include \
             -i./deps/samp-stdlib \
             -i./deps/mysql \
             -i./deps/mysql/include \
