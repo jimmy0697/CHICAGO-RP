@@ -21,7 +21,12 @@ jobs:
 
           # a_mysql.inc n'existe pas dans le depot git (fichier .in genere
           # uniquement lors des releases) : on telecharge la release Linux.
-          MYSQL_URL=$(curl -s https://api.github.com/repos/pBlueG/SA-MP-MySQL/releases/latest | grep "browser_download_url.*linux-static.tar.gz" | cut -d '"' -f 4 | head -n1)
+          MYSQL_URL=$(curl -s https://api.github.com/repos/pBlueG/SA-MP-MySQL/releases/latest | grep "browser_download_url.*Debian-static.tar.gz" | cut -d '"' -f 4 | head -n1)
+          echo "MySQL URL trouvee : $MYSQL_URL"
+          if [ -z "$MYSQL_URL" ]; then
+            echo "ERREUR: impossible de trouver l'URL de la release MySQL"
+            exit 1
+          fi
           mkdir -p deps/mysql
           wget -q "$MYSQL_URL" -O mysql.tar.gz
           tar --strip-components=1 -xzf mysql.tar.gz -C deps/mysql
