@@ -47,6 +47,7 @@ jobs:
           chmod +x pawnc-3.10.10-linux/bin/pawncc
           LIBDIR=$(dirname $(find pawnc-3.10.10-linux -name "libpawnc*" | head -n1))
           export LD_LIBRARY_PATH=$LIBDIR:$LD_LIBRARY_PATH
+    sed -i 's/WC_CONST //g' deps/weaponconfig/weapon-config.inc
           ./pawnc-3.10.10-linux/bin/pawncc gamemodes/CRP.pwn \
             -i./deps/pawn-compiler/include \
             -i./deps/samp-stdlib \
