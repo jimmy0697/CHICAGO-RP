@@ -70,6 +70,7 @@
 #define CRP2      "{006400}"
 
 #if defined DEBUG
+#define SAMP_CONST_CORRECT
 	#define MYSQL_HOSTNAME  "localhost"
 	#define MYSQL_DATABASE  "EmeraldHosting3"
 	#define MYSQL_USERNAME  "Rejino"
