@@ -48,6 +48,10 @@ jobs:
           LIBDIR=$(dirname $(find pawnc-3.10.10-linux -name "libpawnc*" | head -n1))
           export LD_LIBRARY_PATH=$LIBDIR:$LD_LIBRARY_PATH
           sed -i 's/WC_CONST //g' deps/weaponconfig/weapon-config.inc
+          sed -i 's/DebugMessage(%1);/DebugMessage(%1) 0/' deps/weaponconfig/weapon-config.inc
+          sed -i 's/DebugMessageRed(%1);/DebugMessageRed(%1) 0/' deps/weaponconfig/weapon-config.inc
+          sed -i 's/DebugMessageAll(%1);/DebugMessageAll(%1) 0/' deps/weaponconfig/weapon-config.inc
+          sed -i 's/DebugMessageRedAll(%1);/DebugMessageRedAll(%1) 0/' deps/weaponconfig/weapon-config.inc
           ./pawnc-3.10.10-linux/bin/pawncc gamemodes/CRP.pwn \
             -i./deps/pawn-compiler/include \
             -i./deps/samp-stdlib \
