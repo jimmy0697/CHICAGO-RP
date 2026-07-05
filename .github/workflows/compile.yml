@@ -55,8 +55,7 @@ jobs:
             -i./deps/streamer \
             -i./deps/streamer/include \
             -i./deps/pawncmd/src \
-            -i./deps/sampvoice \
-            -i./deps/sampvoice/include \
+            -i./deps/sampvoice/documents \
             -i./deps/mselection \
             -i./deps/callbacks \
             -i./deps/sky \
