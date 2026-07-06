@@ -86,6 +86,28 @@ jobs:
           echo "=== Verification de l'insertion ==="
           grep -n "a_mysql\|mysql_compat" gamemodes/CRP.pwn | head -n 5
 
+      - name: Fixes round 2 + diagnostic SampVoice et IsValidVehicle
+        run: |
+          # 1) Ajout de mysql_escape_string comme alias de mysql_real_escape_string
+          cat >> deps/mysql/pawno/include/mysql_compat.inc << 'COMPAT_EOF'
+
+          stock mysql_real_escape_string(const source[], destination[], connectionHandle = 1, max_len = sizeof destination) {
+              return mysql_escape_string(source, destination, connectionHandle, max_len);
+          }
+
+          stock IsPlayerSpawned(playerid) {
+              return GetPlayerState(playerid) == PLAYER_STATE_SPAWNED;
+          }
+          COMPAT_EOF
+          echo "=== Contenu final de mysql_compat.inc ==="
+          cat deps/mysql/pawno/include/mysql_compat.inc
+          echo ""
+          echo "=== Fonctions natives/stock SV_/Sv dans sampvoice ==="
+          grep -rn "native Sv\|stock Sv\|#define SV_\|native SV_\|stock SV_" deps/sampvoice/documents/ || true
+          echo ""
+          echo "=== Toutes les definitions de IsValidVehicle dans CRP.pwn ==="
+          grep -n "IsValidVehicle" gamemodes/CRP.pwn || true
+
       - name: Compile gamemode
         run: |
           chmod +x pawnc-3.10.10-linux/bin/pawncc
