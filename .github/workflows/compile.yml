@@ -113,7 +113,7 @@ jobs:
           # 1) Suppression robuste de la redeclaration IsValidVehicle
           #    (tolere espaces/tabulations avant "native", au cas ou le sed precedent
           #    n'ait pas matche a cause d'indentation)
-          grep -n "native[[:space:]]\+IsValidVehicle" gamemodes/CRP.pwn
+          grep -n "native[[:space:]]\+IsValidVehicle" gamemodes/CRP.pwn || true
           sed -i "/^[[:space:]]*native[[:space:]]\+IsValidVehicle[[:space:]]*(/d" gamemodes/CRP.pwn
           echo "=== Verification apres suppression ==="
           grep -n "native[[:space:]]\+IsValidVehicle" gamemodes/CRP.pwn || echo "OK: plus aucune redeclaration"
