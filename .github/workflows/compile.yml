@@ -50,6 +50,42 @@ jobs:
           echo "=== Appels cache_get_row_int / cache_get_row / cache_get_value_name_int dans CRP.pwn ==="
           grep -n "cache_get_row_int\|cache_get_row(\|cache_get_value_name_int" gamemodes/CRP.pwn || true
 
+      - name: Ajouter wrappers de compatibilite MySQL
+        run: |
+          cat > deps/mysql/pawno/include/mysql_compat.inc << 'COMPAT_EOF'
+          #if defined _mysql_compat_included
+            #endinput
+          #endif
+          #define _mysql_compat_included
+
+          stock cache_get_row_int(row, col) {
+              new dest;
+              cache_get_value_index_int(row, col, dest);
+              return dest;
+          }
+
+          stock cache_get_row(row, col, dest[], size = sizeof dest) {
+              cache_get_value_index(row, col, dest, size);
+              return 1;
+          }
+
+          stock cache_get_field_content(row, const field[], dest[], connectionHandle = 1, max_len = 128) {
+              new fields = cache_get_field_count();
+              new name[64];
+              for (new i = 0; i < fields; i++) {
+                  cache_get_field_name(i, name);
+                  if (!strcmp(name, field)) {
+                      return cache_get_value_index(row, i, dest, max_len);
+                  }
+              }
+              dest[0] = 0;
+              return 0;
+          }
+          COMPAT_EOF
+          sed -i "/a_mysql/a #include <mysql_compat>" gamemodes/CRP.pwn
+          echo "=== Verification de l'insertion ==="
+          grep -n "a_mysql\|mysql_compat" gamemodes/CRP.pwn | head -n 5
+
       - name: Compile gamemode
         run: |
           chmod +x pawnc-3.10.10-linux/bin/pawncc
