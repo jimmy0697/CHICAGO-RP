@@ -36,7 +36,7 @@ jobs:
           git clone --depth 1 https://github.com/Y-Less/sscanf.git deps/sscanf
           git clone --depth 1 https://github.com/samp-incognito/samp-streamer-plugin.git deps/streamer
           git clone --depth 1 https://github.com/katursis/Pawn.CMD.git deps/pawncmd
-          git clone --depth 1 https://github.com/CyberMor/sampvoice.git deps/sampvoice
+          git clone --depth 1 https://github.com/AmyrAhmady/sampvoice.git deps/sampvoice
           git clone --depth 1 https://github.com/alextwothousand/mSelection.git deps/mselection
           git clone --depth 1 https://github.com/emmet-jones/New-SA-MP-callbacks.git deps/callbacks
           git clone --depth 1 https://github.com/oscar-broman/SKY.git deps/sky
