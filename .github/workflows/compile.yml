@@ -103,7 +103,7 @@ jobs:
           cat deps/mysql/pawno/include/mysql_compat.inc
           echo ""
           echo "=== Fonctions natives/stock SV_/Sv dans sampvoice ==="
-          grep -rn "native Sv\|stock Sv\|#define SV_\|native SV_\|stock SV_" deps/sampvoice/documents/ || true
+          grep -rn "native Sv\|stock Sv\|#define SV_\|native SV_\|stock SV_" deps/sampvoice/server/ || true
           echo ""
           echo "=== Toutes les definitions de IsValidVehicle dans CRP.pwn ==="
           grep -n "IsValidVehicle" gamemodes/CRP.pwn || true
@@ -128,7 +128,7 @@ jobs:
             -i./deps/streamer \
             -i./deps/streamer/include \
             -i./deps/pawncmd/src \
-            -i./deps/sampvoice/documents \
+            -i./deps/sampvoice/server \
             -i./deps/mselection \
             -i./deps/callbacks \
             -i./deps/sky \
