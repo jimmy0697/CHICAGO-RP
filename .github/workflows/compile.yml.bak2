@@ -103,77 +103,10 @@ jobs:
           cat deps/mysql/pawno/include/mysql_compat.inc
           echo ""
           echo "=== Fonctions natives/stock SV_/Sv dans sampvoice ==="
-          grep -rn "native Sv\|stock Sv\|#define SV_\|native SV_\|stock SV_" deps/sampvoice/server/ || true
+          grep -rn "native Sv\|stock Sv\|#define SV_\|native SV_\|stock SV_" deps/sampvoice/documents/ || true
           echo ""
           echo "=== Toutes les definitions de IsValidVehicle dans CRP.pwn ==="
           grep -n "IsValidVehicle" gamemodes/CRP.pwn || true
-
-      - name: Fixes round 4 (IsValidVehicle robuste + floatstr + diagnostic 18650)
-        run: |
-          # 1) Suppression robuste de la redeclaration IsValidVehicle
-          #    (tolere espaces/tabulations avant "native", au cas ou le sed precedent
-          #    n'ait pas matche a cause d'indentation)
-          grep -n "native[[:space:]]\+IsValidVehicle" gamemodes/CRP.pwn
-          sed -i "/^[[:space:]]*native[[:space:]]\+IsValidVehicle[[:space:]]*(/d" gamemodes/CRP.pwn
-          echo "=== Verification apres suppression ==="
-          grep -n "native[[:space:]]\+IsValidVehicle" gamemodes/CRP.pwn || echo "OK: plus aucune redeclaration"
-          echo ""
-
-          # 2) Reimplementation de floatstr (absente du samp-stdlib clone)
-          #    Fonction standard qui convertit un string en Float, en pur Pawn,
-          #    sans dependre d'un native externe.
-          cat > deps/samp-stdlib/floatstr_compat.inc << 'COMPAT_EOF'
-          #if defined _floatstr_compat_included
-            #endinput
-          #endif
-          #define _floatstr_compat_included
-
-          #if !defined floatstr
-          stock Float:floatstr(const string[]) {
-              new i = 0;
-              new sign = 1;
-              new integer_part = 0;
-              new decimal_part = 0;
-              new decimal_digits = 0;
-
-              if (string[i] == '-') { sign = -1; i++; }
-              else if (string[i] == '+') { i++; }
-
-              while (string[i] >= '0' && string[i] <= '9') {
-                  integer_part = integer_part * 10 + (string[i] - '0');
-                  i++;
-              }
-
-              if (string[i] == '.') {
-                  i++;
-                  while (string[i] >= '0' && string[i] <= '9') {
-                      decimal_part = decimal_part * 10 + (string[i] - '0');
-                      decimal_digits++;
-                      i++;
-                  }
-              }
-
-              new Float:result = float(integer_part);
-              if (decimal_digits > 0) {
-                  new Float:divisor = 1.0;
-                  for (new d = 0; d < decimal_digits; d++) {
-                      divisor *= 10.0;
-                  }
-                  result += float(decimal_part) / divisor;
-              }
-
-              return float(sign) * result;
-          }
-          #endif
-          COMPAT_EOF
-          sed -i "/#include <a_samp>/a #include <floatstr_compat>" gamemodes/CRP.pwn
-          echo "=== Verification insertion floatstr_compat ==="
-          grep -n "a_samp\|floatstr_compat" gamemodes/CRP.pwn | head -n 5
-          echo ""
-
-          # 3) Diagnostic complet de l'erreur 025 a la ligne 18650
-          echo "=== Contexte precis autour de la ligne 18650 (error 025) ==="
-          sed -n "18600,18660p" gamemodes/CRP.pwn
 
       - name: Compile gamemode
         run: |
@@ -195,7 +128,7 @@ jobs:
             -i./deps/streamer \
             -i./deps/streamer/include \
             -i./deps/pawncmd/src \
-            -i./deps/sampvoice/server \
+            -i./deps/sampvoice/documents \
             -i./deps/mselection \
             -i./deps/callbacks \
             -i./deps/sky \
