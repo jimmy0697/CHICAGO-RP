@@ -42,6 +42,14 @@ jobs:
           git clone --depth 1 https://github.com/oscar-broman/SKY.git deps/sky
           git clone --depth 1 https://github.com/oscar-broman/samp-weapon-config.git deps/weaponconfig
 
+      - name: Debug cache_ natives disponibles
+        run: |
+          echo "=== Natives cache_ dans a_mysql.inc ==="
+          grep -n "native cache_" deps/mysql/pawno/include/*.inc || true
+          echo ""
+          echo "=== Appels cache_get_row_int / cache_get_row / cache_get_value_name_int dans CRP.pwn ==="
+          grep -n "cache_get_row_int\|cache_get_row(\|cache_get_value_name_int" gamemodes/CRP.pwn || true
+
       - name: Compile gamemode
         run: |
           chmod +x pawnc-3.10.10-linux/bin/pawncc
