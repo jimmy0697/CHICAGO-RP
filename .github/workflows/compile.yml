@@ -110,6 +110,7 @@ jobs:
 
       - name: Fixes round 4 (IsValidVehicle robuste + floatstr + diagnostic 18650)
         run: |
+          set +e
           # 1) Suppression robuste de la redeclaration IsValidVehicle
           #    (tolere espaces/tabulations avant "native", au cas ou le sed precedent
           #    n'ait pas matche a cause d'indentation)
