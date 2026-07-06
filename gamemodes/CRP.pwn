@@ -21,6 +21,29 @@
 
 #include <a_http>
 #include <a_mysql>
+
+// --- Compatibilite ascendante avec l'ancienne API MySQL (cache_get_field_content_*) ---
+// Ces wrappers recreent l'ancienne interface au-dessus de la nouvelle API R41+
+stock cache_get_field_content_int(row_idx, const column_name[])
+{
+    new result;
+    cache_get_value_name_int(row_idx, column_name, result);
+    return result;
+}
+
+stock Float:cache_get_field_content_float(row_idx, const column_name[])
+{
+    new Float:result;
+    cache_get_value_name_float(row_idx, column_name, result);
+    return result;
+}
+
+stock cache_get_data(&rows, &fields, connectionHandle = 1)
+{
+    cache_get_row_count(rows);
+    cache_get_field_count(fields);
+}
+
 #include <foreach>
 #include <sscanf2>
 #include <streamer>
