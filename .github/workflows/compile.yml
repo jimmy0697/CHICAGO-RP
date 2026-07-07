@@ -42,6 +42,12 @@ jobs:
           git clone --depth 1 https://github.com/oscar-broman/SKY.git deps/sky
           git clone --depth 1 https://github.com/oscar-broman/samp-weapon-config.git deps/weaponconfig
           sed -i '1i #define SAMP_CONST_CORRECT' deps/weaponconfig/weapon-config.inc
+          echo "=== Verification SAMP_CONST_CORRECT reellement applique ==="
+          head -5 deps/weaponconfig/weapon-config.inc
+          echo ""
+          echo "=== Toutes declarations OnQueryError (forward/public/macro) dans deps + gamemodes ==="
+          grep -rn "OnQueryError" deps/ gamemodes/CRP.pwn 2>/dev/null
+          echo ""
 
       - name: Debug cache_ natives disponibles
         run: |
