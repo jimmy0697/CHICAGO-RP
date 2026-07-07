@@ -202,6 +202,13 @@ jobs:
           sed -i 's/DebugMessageRed(%1);/DebugMessageRed(%1) 0/' deps/weaponconfig/weapon-config.inc
           sed -i 's/DebugMessageAll(%1);/DebugMessageAll(%1) 0/' deps/weaponconfig/weapon-config.inc
           sed -i 's/DebugMessageRedAll(%1);/DebugMessageRedAll(%1) 0/' deps/weaponconfig/weapon-config.inc
+          echo "=== Prototype reel OnQueryError dans les deps ==="
+          grep -rn "OnQueryError" deps/ 2>/dev/null | grep -iv "gamemodes" || echo "aucune reference trouvee"
+          echo ""
+          echo "=== Prototype reel ApplyAnimation (native) dans les deps ==="
+          grep -rn "native ApplyAnimation" deps/ 2>/dev/null || echo "aucune reference trouvee dans deps/"
+          find / -iname "a_samp.inc" 2>/dev/null | while read f; do echo "--- $f ---"; grep -n "ApplyAnimation" "$f"; done
+          echo ""
           ./pawnc-3.10.10-linux/bin/pawncc gamemodes/CRP.pwn \
             -i./deps/pawn-compiler/include \
             -i./deps/samp-stdlib \
