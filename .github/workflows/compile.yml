@@ -42,6 +42,63 @@ jobs:
           git clone --depth 1 https://github.com/oscar-broman/SKY.git deps/sky
           git clone --depth 1 https://github.com/oscar-broman/samp-weapon-config.git deps/weaponconfig
           sed -i '1i #define SAMP_CONST_CORRECT' deps/weaponconfig/weapon-config.inc
+          echo "=== Recherche du coupable exact desequilibre accolades ==="
+          cat > /tmp/find_culprit.py << 'CULPRIT_EOF'
+          import re
+          all_lines = open('gamemodes/CRP.pwn', encoding='utf-8', errors='replace').readlines()
+          depth = 0
+          in_comment = False
+          func_pattern = re.compile(r'^\s*(public|forward|stock)\s+\w')
+          last_func_line = 0
+          last_func_name = ''
+          last_func_depth = 0
+          for i, line in enumerate(all_lines[:18650], start=1):
+              if func_pattern.match(line) and depth == 0:
+                  last_func_line = i
+                  last_func_name = line.strip()[:60]
+                  last_func_depth = depth
+              j = 0
+              while j < len(line):
+                  c = line[j]
+                  nxt = line[j+1] if j+1 < len(line) else ''
+                  if in_comment:
+                      if c == '*' and nxt == '/':
+                          in_comment = False
+                          j += 1
+                  elif c == '/' and nxt == '/':
+                      break
+                  elif c == '/' and nxt == '*':
+                      in_comment = True
+                      j += 1
+                  elif c == chr(34):
+                      j += 1
+                      while j < len(line) and line[j] != chr(34):
+                          if line[j] == chr(92):
+                              j += 1
+                          j += 1
+                  elif c == chr(39):
+                      j += 1
+                      while j < len(line) and line[j] != chr(39):
+                          if line[j] == chr(92):
+                              j += 1
+                          j += 1
+                  elif c == '{':
+                      depth += 1
+                  elif c == '}':
+                      depth -= 1
+                      if depth == 0 and last_func_line > 0:
+                          print(f'Fonction fermee OK: ligne {last_func_line}: {last_func_name}')
+                          last_func_line = 0
+                  j += 1
+          print()
+          print('=== ETAT FINAL a la ligne 18650 ===')
+          print('Profondeur:', depth)
+          if last_func_line > 0:
+              print(f'>>> COUPABLE PROBABLE: la fonction demarree ligne {last_func_line} ne sest jamais refermee avant la ligne 18650')
+              print(f'>>> Contenu: {last_func_name}')
+          CULPRIT_EOF
+          python3 /tmp/find_culprit.py | tail -60
+          echo ""
           echo "=== Verification equilibre accolades avant ligne 18650 ==="
           cat > /tmp/check_braces.py << 'BRACE_EOF'
           lines = open('gamemodes/CRP.pwn', encoding='utf-8', errors='replace').readlines()
