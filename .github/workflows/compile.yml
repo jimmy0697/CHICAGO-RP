@@ -185,6 +185,21 @@ jobs:
           LIBDIR=$(dirname $(find pawnc-3.10.10-linux -name "libpawnc*" | head -n1))
           export LD_LIBRARY_PATH=$LIBDIR:$LD_LIBRARY_PATH
           sed -i '1i #define SAMP_CONST_CORRECT' deps/weaponconfig/weapon-config.inc
+          echo "=== git HEAD actuel ==="
+          git log -1 --format="%H %ci"
+          echo ""
+          echo "=== Nombre de lignes gamemodes/CRP.pwn ==="
+          wc -l gamemodes/CRP.pwn
+          echo ""
+          echo "=== Contexte ligne 18650 (error 025) ==="
+          sed -n "18610,18690p" gamemodes/CRP.pwn
+          echo ""
+          echo "=== Toutes occurrences OnAdminOfflinePrison (numeros reels) ==="
+          grep -n "OnAdminOfflinePrison" gamemodes/CRP.pwn
+          echo ""
+          echo "=== Contexte ligne 2101 weapon-config.inc APRES patch SAMP_CONST_CORRECT (error 035) ==="
+          sed -n "2071,2131p" deps/weaponconfig/weapon-config.inc
+          echo ""
           sed -i 's/DebugMessage(%1);/DebugMessage(%1) 0/' deps/weaponconfig/weapon-config.inc
           sed -i 's/DebugMessageRed(%1);/DebugMessageRed(%1) 0/' deps/weaponconfig/weapon-config.inc
           sed -i 's/DebugMessageAll(%1);/DebugMessageAll(%1) 0/' deps/weaponconfig/weapon-config.inc
