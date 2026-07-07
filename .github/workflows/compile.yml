@@ -42,10 +42,44 @@ jobs:
           git clone --depth 1 https://github.com/oscar-broman/SKY.git deps/sky
           git clone --depth 1 https://github.com/oscar-broman/samp-weapon-config.git deps/weaponconfig
           sed -i '1i #define SAMP_CONST_CORRECT' deps/weaponconfig/weapon-config.inc
+          echo "=== Comparaison caractere par caractere OnQueryError ==="
+          cat > /tmp/compare_onqueryerror.py << 'COMPARE_EOF'
+          import re
+          fwd = open('deps/mysql/pawno/include/a_mysql.inc', encoding='utf-8', errors='replace').read()
+          m = re.search(r'forward OnQueryError\([^;]*\);', fwd)
+          fwd_line = m.group(0) if m else 'INTROUVABLE'
+          pwn = open('gamemodes/CRP.pwn', encoding='utf-8', errors='replace').read()
+          m2 = re.search(r'public OnQueryError\([^)]*\)', pwn)
+          pub_line = m2.group(0) if m2 else 'INTROUVABLE'
+          print('FORWARD:', repr(fwd_line))
+          print('PUBLIC :', repr(pub_line))
+          a = fwd_line.replace('forward ', '').replace('MySQL:handle', 'MySQL:X').rstrip(';')
+          b = pub_line.replace('public ', '').replace('MySQL:connectionHandle', 'MySQL:X')
+          print('A normalise:', repr(a))
+          print('B normalise:', repr(b))
+          if a == b:
+              print('>>> IDENTIQUES apres normalisation du nom de parametre')
+          else:
+              print('>>> DIFFERENCE DETECTEE')
+              for i in range(min(len(a), len(b))):
+                  if a[i] != b[i]:
+                      print('Premiere difference index', i, repr(a[i]), 'vs', repr(b[i]))
+                      print('Contexte A:', repr(a[max(0,i-15):i+15]))
+                      print('Contexte B:', repr(b[max(0,i-15):i+15]))
+                      break
+              if len(a) != len(b):
+                  print('Longueurs differentes A=', len(a), 'B=', len(b))
+          COMPARE_EOF
+          python3 /tmp/compare_onqueryerror.py
+          echo ""
           echo "=== Verification SAMP_CONST_CORRECT reellement applique ==="
           head -5 deps/weaponconfig/weapon-config.inc
           echo ""
           echo "=== Toutes declarations OnQueryError (forward/public/macro) dans deps + gamemodes ==="
+          grep -rn "OnQueryError" deps/ gamemodes/CRP.pwn 2>/dev/null
+          echo ""
+          head -5 deps/weaponconfig/weapon-config.inc
+          echo ""
           grep -rn "OnQueryError" deps/ gamemodes/CRP.pwn 2>/dev/null
           echo ""
 
