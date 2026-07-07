@@ -42,6 +42,44 @@ jobs:
           git clone --depth 1 https://github.com/oscar-broman/SKY.git deps/sky
           git clone --depth 1 https://github.com/oscar-broman/samp-weapon-config.git deps/weaponconfig
           sed -i '1i #define SAMP_CONST_CORRECT' deps/weaponconfig/weapon-config.inc
+          echo "=== Verification equilibre accolades avant ligne 18650 ==="
+          cat > /tmp/check_braces.py << 'BRACE_EOF'
+          lines = open('gamemodes/CRP.pwn', encoding='utf-8', errors='replace').readlines()
+          depth = 0
+          in_string = False
+          in_comment = False
+          for i, line in enumerate(lines[:18650], start=1):
+              j = 0
+              while j < len(line):
+                  c = line[j]
+                  nxt = line[j+1] if j+1 < len(line) else ''
+                  if in_comment:
+                      if c == '*' and nxt == '/':
+                          in_comment = False
+                          j += 1
+                  elif c == '/' and nxt == '/':
+                      break
+                  elif c == '/' and nxt == '*':
+                      in_comment = True
+                      j += 1
+                  elif c == chr(34):
+                      j += 1
+                      while j < len(line) and line[j] != chr(34):
+                          if line[j] == chr(92):
+                              j += 1
+                          j += 1
+                  elif c == '{':
+                      depth += 1
+                  elif c == '}':
+                      depth -= 1
+                      if depth < 0:
+                          print('ACCOLADE EN TROP a la ligne', i, ': depth negatif')
+                  j += 1
+          print('Profondeur accolades apres ligne 18650 (approximatif, sans macros):', depth)
+          print('Si different de 0, il y a un desequilibre quelque part avant.')
+          BRACE_EOF
+          python3 /tmp/check_braces.py
+          echo ""
           echo "=== Recherche de macros suspectes error/query/callback/handle ==="
           grep -rn "#define error\|#define query\|#define callback\|#define errorid\|#define handle\|#define connectionHandle" deps/ gamemodes/CRP.pwn 2>/dev/null || echo "aucune macro suspecte trouvee"
           echo ""
