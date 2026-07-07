@@ -42,6 +42,9 @@ jobs:
           git clone --depth 1 https://github.com/oscar-broman/SKY.git deps/sky
           git clone --depth 1 https://github.com/oscar-broman/samp-weapon-config.git deps/weaponconfig
           sed -i '1i #define SAMP_CONST_CORRECT' deps/weaponconfig/weapon-config.inc
+          echo "=== Contexte complet autour de TOUS les forward OnQueryError (avec ifdef) ==="
+          grep -n -B 15 "forward OnQueryError" deps/mysql/pawno/include/a_mysql.inc
+          echo ""
           echo "=== Comparaison caractere par caractere OnQueryError ==="
           cat > /tmp/compare_onqueryerror.py << 'COMPARE_EOF'
           import re
