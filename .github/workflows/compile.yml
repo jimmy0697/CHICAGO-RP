@@ -42,6 +42,15 @@ jobs:
           git clone --depth 1 https://github.com/oscar-broman/SKY.git deps/sky
           git clone --depth 1 https://github.com/oscar-broman/samp-weapon-config.git deps/weaponconfig
           sed -i '1i #define SAMP_CONST_CORRECT' deps/weaponconfig/weapon-config.inc
+          echo "=== Recherche de macros suspectes error/query/callback/handle ==="
+          grep -rn "#define error\|#define query\|#define callback\|#define errorid\|#define handle\|#define connectionHandle" deps/ gamemodes/CRP.pwn 2>/dev/null || echo "aucune macro suspecte trouvee"
+          echo ""
+          echo "=== Version complete du fichier a_mysql.inc autour de OnQueryError (deja preprocesse par sed) ==="
+          grep -c "forward OnQueryError" deps/mysql/pawno/include/a_mysql.inc
+          echo ""
+          echo "=== Toutes les lignes contenant juste OnQueryError isole (sans forward/public devant) ==="
+          grep -n "OnQueryError" deps/mysql/pawno/include/*.inc 2>/dev/null
+          echo ""
           echo "=== Contexte complet autour de TOUS les forward OnQueryError (avec ifdef) ==="
           grep -n -B 15 "forward OnQueryError" deps/mysql/pawno/include/a_mysql.inc
           echo ""
