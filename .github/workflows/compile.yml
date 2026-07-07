@@ -174,7 +174,6 @@ jobs:
           grep -n "floatstr_compat" gamemodes/CRP.pwn
           echo ""
 
-          echo "=== Contexte precis autour de la ligne 18650 (error 025) ==="
           sed -n "18600,18660p" gamemodes/CRP.pwn
 
           set -e
@@ -188,17 +187,17 @@ jobs:
           echo "=== git HEAD actuel ==="
           git log -1 --format="%H %ci"
           echo ""
-          echo "=== Nombre de lignes gamemodes/CRP.pwn ==="
-          wc -l gamemodes/CRP.pwn
+          echo "=== Ligne EXACTE 18650 (error 025) avec 15 lignes de contexte ==="
+          awk 'NR>=18635 && NR<=18665 { if (NR==18650) print NR": >>>> " $0; else print NR": " $0 }' gamemodes/CRP.pwn
           echo ""
-          echo "=== Contexte ligne 18650 (error 025) ==="
-          sed -n "18610,18690p" gamemodes/CRP.pwn
+          echo "=== Ligne EXACTE 2101 weapon-config.inc (error 035) avec contexte ==="
+          awk 'NR>=2085 && NR<=2115 { if (NR==2101) print NR": >>>> " $0; else print NR": " $0 }' deps/weaponconfig/weapon-config.inc
+          echo ""
+          echo ""
+          echo ""
           echo ""
           echo "=== Toutes occurrences OnAdminOfflinePrison (numeros reels) ==="
-          grep -n "OnAdminOfflinePrison" gamemodes/CRP.pwn
           echo ""
-          echo "=== Contexte ligne 2101 weapon-config.inc APRES patch SAMP_CONST_CORRECT (error 035) ==="
-          sed -n "2071,2131p" deps/weaponconfig/weapon-config.inc
           echo ""
           sed -i 's/DebugMessage(%1);/DebugMessage(%1) 0/' deps/weaponconfig/weapon-config.inc
           sed -i 's/DebugMessageRed(%1);/DebugMessageRed(%1) 0/' deps/weaponconfig/weapon-config.inc
