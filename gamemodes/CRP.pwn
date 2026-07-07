@@ -18646,7 +18646,7 @@ public OnAdminOfflineFine(playerid, username[], amount, reason[])
 	return 1;
 }
 
-public OnQueryError(errorid, error[], callback[], query[], connectionHandle)
+public OnQueryError(errorid, error[], callback[], query[], MySQL:connectionHandle)
 {
 	new
 	    File:file = fopen("mysql_error.txt", io_append);

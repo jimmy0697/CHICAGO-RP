@@ -183,8 +183,7 @@ jobs:
           chmod +x pawnc-3.10.10-linux/bin/pawncc
           LIBDIR=$(dirname $(find pawnc-3.10.10-linux -name "libpawnc*" | head -n1))
           export LD_LIBRARY_PATH=$LIBDIR:$LD_LIBRARY_PATH
-          sed -i '1i #define SAMP_CONST_CORRECT' deps/weaponconfig/weapon-config.inc
-          echo "=== git HEAD actuel ==="
+                    echo "=== git HEAD actuel ==="
           git log -1 --format="%H %ci"
           echo ""
           echo "=== Ligne EXACTE 18650 (error 025) avec 15 lignes de contexte ==="
