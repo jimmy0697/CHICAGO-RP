@@ -83082,7 +83082,7 @@ CMD:setformeradmin(playerid, params[])
     PlayerInfo[targetid][pFormerAdmin] = status;
 
     mysql_format(connectionID, queryBuffer, sizeof(queryBuffer), "UPDATE users SET formeradmin = %i WHERE uid = %i", PlayerInfo[targetid][pFormerAdmin], PlayerInfo[targetid][pID]);
-    mysql_tquery(connectionID, queryBuffer);
+//    mysql_tquery(connectionID, queryBuffer);
 	return 1;
 }
 
