@@ -1906,7 +1906,7 @@ new connectionID;
 new radioConnectionID;
 new queryBuffer[1024];
 
-/*#if defined Christmas
+///*#if defined Christmas
 	#else
 	new PlayerText:EventTextdraw[MAX_PLAYERS];
 #endif*/
