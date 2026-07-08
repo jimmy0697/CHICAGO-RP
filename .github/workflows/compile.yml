@@ -377,9 +377,10 @@ jobs:
             -o./gamemodes/CRP.amx \
             -d3 -Z+
 
-      - name: Upload compiled .amx
-        if: success()
-        uses: actions/upload-artifact@v4
-        with:
-          name: CRP-compiled
-          path: gamemodes/CRP.amx
+- name: Uploadcompiled .amx
+  if: success()
+  uses: actions/upload-artifact@v4
+  with:
+    name: CRP-compiled
+    path: gamemodes/CRP.amx
+
