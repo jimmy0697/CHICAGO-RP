@@ -18633,7 +18633,7 @@ public OnAdminOfflineFine(playerid, username[], amount, reason[])
 		}
 
 	    mysql_format(connectionID, queryBuffer, sizeof(queryBuffer), "UPDATE users SET cash = cash - %i WHERE username = '%e'", amount, username);
-	    mysql_tquery(connectionID, queryBuffer);
+//	    mysql_tquery(connectionID, queryBuffer);
 
 		SAM(COLOR_LIGHTRED, "AdmCmd: %s was offline fined for $%i by %s, reason: %s", username, amount, GetRPName(playerid), reason);
         Log_Write("log_admin", "%s (uid: %i) offline fined %s for $%i, reason: %s", GetPlayerNameEx(playerid), PlayerInfo[playerid][pID], username, amount, reason);
@@ -83082,7 +83082,7 @@ CMD:setformeradmin(playerid, params[])
     PlayerInfo[targetid][pFormerAdmin] = status;
 
     mysql_format(connectionID, queryBuffer, sizeof(queryBuffer), "UPDATE users SET formeradmin = %i WHERE uid = %i", PlayerInfo[targetid][pFormerAdmin], PlayerInfo[targetid][pID]);
-//    mysql_tquery(connectionID, queryBuffer);
+////    mysql_tquery(connectionID, queryBuffer);
 	return 1;
 }
 
