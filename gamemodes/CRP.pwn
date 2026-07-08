@@ -533,7 +533,7 @@ new MaskaraID[MAX_PLAYERS] = 0;
 
 new bool:HeadShotSystem, bool:RefundSys = true; // Set RefundSys to false to disable
 
-//FACEMASK SYSTEM
+////FACEMASK SYSTEM
 new FaceMask[MAX_PLAYERS];
 
 // Blindfold
@@ -1906,7 +1906,7 @@ new connectionID;
 new radioConnectionID;
 new queryBuffer[1024];
 
-///*#if defined Christmas
+/////*#if defined Christmas
 	#else
 	new PlayerText:EventTextdraw[MAX_PLAYERS];
 #endif*/
@@ -2031,7 +2031,7 @@ new const weaponModelIDs[] = {
 	367, 368, 368, 371
 };
 
-new const clothesShopSkins[] = {
+//new const clothesShopSkins[] = {
 	1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
 	20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37,
 	38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55,
