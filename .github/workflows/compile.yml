@@ -18,9 +18,6 @@ jobs:
         run: |
           git clone --depth 1 https://github.com/pawn-lang/samp-stdlib.git deps/samp-stdlib
           git clone --depth 1 https://github.com/pawn-lang/compiler.git deps/pawn-compiler
-
-          # a_mysql.inc n'existe pas dans le depot git (fichier .in genere
-          # uniquement lors des releases) : on telecharge la release Linux.
           echo "Liste de tous les fichiers disponibles dans la derniere release MySQL :"
           curl -s https://api.github.com/repos/pBlueG/SA-MP-MySQL/releases/latest | jq -r '.assets[].browser_download_url'
           MYSQL_URL=$(curl -s https://api.github.com/repos/pBlueG/SA-MP-MySQL/releases/latest | jq -r '.assets[].browser_download_url' | grep -iE 'debian|linux' | grep -viE 'win|exe' | head -n1)
@@ -43,61 +40,26 @@ jobs:
           git clone --depth 1 https://github.com/oscar-broman/samp-weapon-config.git deps/weaponconfig
           sed -i '1i #define SAMP_CONST_CORRECT' deps/weaponconfig/weapon-config.inc
           echo "=== Recherche du coupable exact desequilibre accolades ==="
-          cat > /tmp/find_culprit.py << 'CULPRIT_EOF'
-          import re
-          all_lines = open('gamemodes/CRP.pwn', encoding='utf-8', errors='replace').readlines()
-          depth = 0
-          in_comment = False
-          func_pattern = re.compile(r'^\s*(public|forward|stock)\s+\w')
-          last_func_line = 0
-          last_func_name = ''
-          last_func_depth = 0
-          for i, line in enumerate(all_lines[:18650], start=1):
-              if func_pattern.match(line) and depth == 0:
-                  last_func_line = i
-                  last_func_name = line.strip()[:60]
-                  last_func_depth = depth
-              j = 0
-              while j < len(line):
-                  c = line[j]
-                  nxt = line[j+1] if j+1 < len(line) else ''
-                  if in_comment:
-                      if c == '*' and nxt == '/':
-                          in_comment = False
-                          j += 1
-                  elif c == '/' and nxt == '/':
-                      break
-                  elif c == '/' and nxt == '*':
-                      in_comment = True
-                      j += 1
-                  elif c == chr(34):
-                      j += 1
-                      while j < len(line) and line[j] != chr(34):
-                          if line[j] == chr(92):
-                              j += 1
-                          j += 1
-                  elif c == chr(39):
-                      j += 1
-                      while j < len(line) and line[j] != chr(39):
-                          if line[j] == chr(92):
-                              j += 1
-                          j += 1
-                  elif c == '{':
-                      depth += 1
-                  elif c == '}':
-                      depth -= 1
-                      if depth == 0 and last_func_line > 0:
-                          print(f'Fonction fermee OK: ligne {last_func_line}: {last_func_name}')
-                          last_func_line = 0
-                  j += 1
-          print()
-          print('=== ETAT FINAL a la ligne 18650 ===')
-          print('Profondeur:', depth)
-          if last_func_line > 0:
-              print(f'>>> COUPABLE PROBABLE: la fonction demarree ligne {last_func_line} ne sest jamais refermee avant la ligne 18650')
-              print(f'>>> Contenu: {last_func_name}')
-          CULPRIT_EOF
-          python3 /tmp/find_culprit.py | tail -60
+          echo bGluZXMgPSBvcGVuKCdnYW1lbW9kZXMvQ1JQLnB3bicsIGVuY29kaW5nPSd1dGYtOCcsIGVycm9ycz0ncmVwbGFjZScpLnJlYWRsaW5lcygpCmRlcHRoID0gMAppbl9jb21tZW50ID0gRmFsc2UKCmZvciBpLCBsaW5lIGluIGVudW1lcmF0ZShsaW5lc1s6MTg2NDhdLCBzdGFydD0xKToKICAgIGogPSAwCiAgICB3aGlsZSBqIDwgbGVuKGxpbmUpOgogICAgICAgIGMgPSBsaW5lW2pdCiAgICAgICAgbnh0ID0gbGluZVtqKzFdIGlmIGorMSA8IGxlbihsaW5lKSBlbHNlICcnCiAgICAgICAgaWYgaW5fY29tbWVudDoKICAgICAgICAgICAgaWYgYyA9PSAnKicgYW5kIG54dCA9PSAnLyc6CiAgICAgICAgICAgICAgICBpbl9jb21tZW50ID0gRmFsc2UKICAgICAgICAgICAgICAgIGogKz0gMQogICAgICAgIGVsaWYgYyA9PSAnLycgYW5kIG54dCA9PSAnKic6CiAgICAgICAgICAgIGluX2NvbW1lbnQgPSBUcnVlCiAgICAgICAgICAgIGogKz0gMQogICAgICAgIGVsaWYgYyA9PSAnLycgYW5kIG54dCA9PSAnLyc6CiAgICAgICAgICAgIGJyZWFrCiAgICAgICAgZWxpZiBjID09IGNocigzNCk6CiAgICAgICAgICAgIGogKz0gMQogICAgICAgICAgICB3aGlsZSBqIDwgbGVuKGxpbmUpIGFuZCBsaW5lW2pdICE9IGNocigzNCk6CiAgICAgICAgICAgICAgICBpZiBsaW5lW2pdID09IGNocig5Mik6CiAgICAgICAgICAgICAgICAgICAgaiArPSAxCiAgICAgICAgICAgICAgICBqICs9IDEKICAgICAgICBlbGlmIGMgPT0gY2hyKDM5KToKICAgICAgICAgICAgaiArPSAxCiAgICAgICAgICAgIHdoaWxlIGogPCBsZW4obGluZSkgYW5kIGxpbmVbal0gIT0gY2hyKDM5KToKICAgICAgICAgICAgICAgIGlmIGxpbmVbal0gPT0gY2hyKDkyKToKICAgICAgICAgICAgICAgICAgICBqICs9IDEKICAgICAgICAgICAgICAgIGogKz0gMQogICAgICAgIGVsaWYgYyA9PSAneyc6CiAgICAgICAgICAgIGRlcHRoICs9IDEKICAgICAgICBlbGlmIGMgPT0gJ30nOgogICAgICAgICAgICBkZXB0aCAtPSAxCiAgICAgICAgaiArPSAxCgpwcmludCgnUHJvZm9uZGV1ciBqdXN0ZSBhdmFudCBsaWduZSAxODY0OSAoYXZhbnQgT25RdWVyeUVycm9yKTogJyArIHN0cihkZXB0aCkpCmlmIGRlcHRoICE9IDA6CiAgICBwcmludCgnPj4+IENPTkZJUk1FOiBpbCB5IGEgdW4gZGVzZXF1aWxpYnJlIEFWQU5UIGxhIGZvbmN0aW9uIE9uUXVlcnlFcnJvci4nKQogICAgcHJpbnQoJz4+PiBMZSBjb21waWxhdGV1ciBwZW5zZSBkb25jIGV0cmUgZW5jb3JlIGRhbnMgdW5lIGF1dHJlIGZvbmN0aW9uLicpCmVsc2U6CiAgICBwcmludCgnPj4+IFByb2ZvbmRldXIgPSAwLCBkb25jIHBhcyBkZSBkZXNlcXVpbGlicmUgYXZhbnQuIExlIHByb2JsZW1lIHZpZW50IGRcJ2FpbGxldXJzIChtYWNybz8pLicpCg== | base64 -d > /tmp/depth_before.py
+          python3 /tmp/depth_before.py
+          echo "=== Recherche OnQueryError dans TOUT le repo ==="
+          grep -rn "OnQueryError" --include="*.inc" --include="*.pwn" . 2>/dev/null
+          echo ""
+          echo "=== Recherche specifique dossier include/ ==="
+          grep -rn "OnQueryError" include/ 2>/dev/null || echo "dossier include/ vide ou absent pour ce terme"
+          echo ""
+          echo "=== Dump hexadecimal des lignes de declaration ==="
+          echo IyBEdW1wIGhleGFkZWNpbWFsIGRlcyBkZXV4IGxpZ25lcyBkZSBkZWNsYXJhdGlvbiBwb3VyIGRldGVjdGVyIGRlcyBvY3RldHMgaW52aXNpYmxlcwoKd2l0aCBvcGVuKCdnYW1lbW9kZXMvQ1JQLnB3bicsICdyYicpIGFzIGY6CiAgICBsaW5lc19jcnAgPSBmLnJlYWRsaW5lcygpCgp3aXRoIG9wZW4oJ2RlcHMvbXlzcWwvcGF3bm8vaW5jbHVkZS9hX215c3FsLmluYycsICdyYicpIGFzIGY6CiAgICBsaW5lc19teXNxbCA9IGYucmVhZGxpbmVzKCkKCmNycF9saW5lID0gbGluZXNfY3JwWzE4NjQ4XSAgIyBsaWduZSAxODY0OSwgaW5kZXggMApteXNxbF9saW5lID0gbGluZXNfbXlzcWxbMjYyXSAgIyBsaWduZSAyNjMsIGluZGV4IDAKCnByaW50KCc9PT0gQ1JQLnB3biBsaWduZSAxODY0OSAoaGV4KSA9PT0nKQpwcmludChjcnBfbGluZS5oZXgoKSkKcHJpbnQoJycpCnByaW50KCc9PT0gYV9teXNxbC5pbmMgbGlnbmUgMjYzIChoZXgpID09PScpCnByaW50KG15c3FsX2xpbmUuaGV4KCkpCnByaW50KCcnKQpwcmludCgnPT09IENSUC5wd24gbGlnbmUgMTg2NDkgKHJlcHIgYnJ1dCkgPT09JykKcHJpbnQocmVwcihjcnBfbGluZSkpCnByaW50KCcnKQpwcmludCgnPT09IGFfbXlzcWwuaW5jIGxpZ25lIDI2MyAocmVwciBicnV0KSA9PT0nKQpwcmludChyZXByKG15c3FsX2xpbmUpKQpwcmludCgnJykKCiMgUmVjaGVyY2hlIGRlIGNhcmFjdGVyZXMgbm9uLUFTQ0lJCmZvciBuYW1lLCBsaW5lIGluIFsoJ0NSUC5wd24nLCBjcnBfbGluZSksICgnYV9teXNxbC5pbmMnLCBteXNxbF9saW5lKV06CiAgICBub25fYXNjaWkgPSBbYiBmb3IgYiBpbiBsaW5lIGlmIGIgPiAxMjddCiAgICBpZiBub25fYXNjaWk6CiAgICAgICAgcHJpbnQoJz4+PiBBVFRFTlRJT04gJyArIG5hbWUgKyAnOiBvY3RldHMgbm9uLUFTQ0lJIHRyb3V2ZXM6ICcgKyBzdHIobm9uX2FzY2lpKSkKICAgIGVsc2U6CiAgICAgICAgcHJpbnQoJz4+PiAnICsgbmFtZSArICc6IHF1ZSBkZSBsIEFTQ0lJIHB1ciwgcmllbiBkZSBzdXNwZWN0IGF1IG5pdmVhdSBvY3RldHMuJykK | base64 -d > /tmp/hexdump_compare.py
+          python3 /tmp/hexdump_compare.py 
+          echo "=== Verification blocs conditionnels autour de OnQueryError ==="
+          echo bGluZXMgPSBvcGVuKCdkZXBzL215c3FsL3Bhd25vL2luY2x1ZGUvYV9teXNxbC5pbmMnLCBlbmNvZGluZz0ndXRmLTgnLCBlcnJvcnM9J3JlcGxhY2UnKS5yZWFkbGluZXMoKQoKcHJpbnQoJz09PSBUb3V0ZXMgbGVzIGxpZ25lcyBjb250ZW5hbnQgZm9yd2FyZCBPblF1ZXJ5RXJyb3IgZGFucyBhX215c3FsLmluYyA9PT0nKQpmb3IgaSwgbGluZSBpbiBlbnVtZXJhdGUobGluZXMsIHN0YXJ0PTEpOgogICAgaWYgJ2ZvcndhcmQnIGluIGxpbmUgYW5kICdPblF1ZXJ5RXJyb3InIGluIGxpbmU6CiAgICAgICAgcHJpbnQoc3RyKGkpICsgJzogJyArIGxpbmUuc3RyaXAoKSkKCnByaW50KCcnKQpwcmludCgnPT09IENvbnRleHRlICNpZi8jZWxzZS8jZW5kaWYgYXV0b3VyIGRlIGxhIGxpZ25lIDI2MyAoMjUwIGEgMjgwKSA9PT0nKQpmb3IgaSwgbGluZSBpbiBlbnVtZXJhdGUobGluZXNbMjQ5OjI4MF0sIHN0YXJ0PTI1MCk6CiAgICBzdHJpcHBlZCA9IGxpbmUuc3RyaXAoKQogICAgaWYgc3RyaXBwZWQuc3RhcnRzd2l0aCgnIycpIG9yICdPblF1ZXJ5RXJyb3InIGluIGxpbmU6CiAgICAgICAgcHJpbnQoc3RyKGkpICsgJzogJyArIHN0cmlwcGVkKQo= | base64 -d > /tmp/check_ifdef.py
+          python3 /tmp/check_ifdef.py
+          echo "=== Verification copies multiples de a_mysql.inc ==="
+          echo aW1wb3J0IHN1YnByb2Nlc3MKaW1wb3J0IGhhc2hsaWIKCnJlc3VsdCA9IHN1YnByb2Nlc3MucnVuKFsnZmluZCcsICcuJywgJy1pbmFtZScsICdhX215c3FsLmluYyddLCBjYXB0dXJlX291dHB1dD1UcnVlLCB0ZXh0PVRydWUpCmZpbGVzID0gW2YgZm9yIGYgaW4gcmVzdWx0LnN0ZG91dC5zdHJpcCgpLnNwbGl0KCdcbicpIGlmIGZdCgpwcmludCgnPT09IFRvdXMgbGVzIGZpY2hpZXJzIGFfbXlzcWwuaW5jIHRyb3V2ZXMgZGFucyBsZSByZXBvID09PScpCmZvciBmIGluIGZpbGVzOgogICAgcHJpbnQoZikKCnByaW50KCcnKQpwcmludCgnPT09IEhhc2ggZGUgY2hhcXVlIGZpY2hpZXIgKHBvdXIgZGV0ZWN0ZXIgZGVzIHZlcnNpb25zIGRpZmZlcmVudGVzKSA9PT0nKQpoYXNoZXMgPSB7fQpmb3IgZiBpbiBmaWxlczoKICAgIHRyeToKICAgICAgICB3aXRoIG9wZW4oZiwgJ3JiJykgYXMgZmg6CiAgICAgICAgICAgIGNvbnRlbnQgPSBmaC5yZWFkKCkKICAgICAgICAgICAgaCA9IGhhc2hsaWIubWQ1KGNvbnRlbnQpLmhleGRpZ2VzdCgpCiAgICAgICAgICAgIGhhc2hlc1tmXSA9IGgKICAgICAgICAgICAgcHJpbnQoZiArICc6ICcgKyBoICsgJyAoJyArIHN0cihsZW4oY29udGVudCkpICsgJyBvY3RldHMpJykKICAgIGV4Y2VwdCBFeGNlcHRpb24gYXMgZToKICAgICAgICBwcmludChmICsgJzogRVJSRVVSICcgKyBzdHIoZSkpCgpwcmludCgnJykKdW5pcXVlX2hhc2hlcyA9IHNldChoYXNoZXMudmFsdWVzKCkpCmlmIGxlbih1bmlxdWVfaGFzaGVzKSA+IDE6CiAgICBwcmludCgnPj4+IEFUVEVOVElPTjogcGx1c2lldXJzIHZlcnNpb25zIERJRkZFUkVOVEVTIGRlIGFfbXlzcWwuaW5jIGRldGVjdGVlcyEnKQplbGlmIGxlbihmaWxlcykgPiAxOgogICAgcHJpbnQoJz4+PiBQbHVzaWV1cnMgY29waWVzIHRyb3V2ZWVzIG1haXMgZWxsZXMgc29udCBpZGVudGlxdWVzIChtZW1lIGhhc2gpLicpCmVsc2U6CiAgICBwcmludCgnPj4+IFVuZSBzZXVsZSBjb3BpZSB0cm91dmVlIGRhbnMgdG91dCBsZSByZXBvLicpCg== | base64 -d > /tmp/find_duplicates.py
+          python3 /tmp/find_duplicates.py
+          echo "=== Verification librairie de callbacks (hooks) ==="
+          echo aW1wb3J0IG9zCgpwcmludCgnPT09IENvbnRlbnUgZHUgZG9zc2llciBkZXBzL2NhbGxiYWNrcyA9PT0nKQpmb3Igcm9vdCwgZGlycywgZmlsZXMgaW4gb3Mud2FsaygnZGVwcy9jYWxsYmFja3MnKToKICAgIGZvciBmIGluIGZpbGVzOgogICAgICAgIHByaW50KG9zLnBhdGguam9pbihyb290LCBmKSkKCnByaW50KCcnKQpwcmludCgnPT09IFJlY2hlcmNoZSBkZSBtYWNyb3Mgc3VzcGVjdGVzIChob29rLCBmb3J3YXJkIGdlbmVyaXF1ZSkgZGFucyBkZXBzL2NhbGxiYWNrcyA9PT0nKQpmb3Igcm9vdCwgZGlycywgZmlsZXMgaW4gb3Mud2FsaygnZGVwcy9jYWxsYmFja3MnKToKICAgIGZvciBmIGluIGZpbGVzOgogICAgICAgIHBhdGggPSBvcy5wYXRoLmpvaW4ocm9vdCwgZikKICAgICAgICB0cnk6CiAgICAgICAgICAgIHdpdGggb3BlbihwYXRoLCBlbmNvZGluZz0ndXRmLTgnLCBlcnJvcnM9J3JlcGxhY2UnKSBhcyBmaDoKICAgICAgICAgICAgICAgIGZvciBpLCBsaW5lIGluIGVudW1lcmF0ZShmaCwgc3RhcnQ9MSk6CiAgICAgICAgICAgICAgICAgICAgbG93ID0gbGluZS5sb3dlcigpCiAgICAgICAgICAgICAgICAgICAgaWYgJ29ucXVlcnllcnJvcicgaW4gbG93IG9yICgnI2RlZmluZScgaW4gbG93IGFuZCAncHVibGljJyBpbiBsb3cpIG9yICdob29rJyBpbiBsb3c6CiAgICAgICAgICAgICAgICAgICAgICAgIHByaW50KHBhdGggKyAnOicgKyBzdHIoaSkgKyAnOiAnICsgbGluZS5zdHJpcCgpKQogICAgICAgIGV4Y2VwdCBFeGNlcHRpb24gYXMgZToKICAgICAgICAgICAgcHJpbnQocGF0aCArICc6IEVSUkVVUiAnICsgc3RyKGUpKQo= | base64 -d > /tmp/check_callbacks_lib.py
+          python3 /tmp/check_callbacks_lib.py
           echo ""
           echo "=== Verification equilibre accolades avant ligne 18650 ==="
           cat > /tmp/check_braces.py << 'BRACE_EOF'
@@ -331,32 +293,11 @@ jobs:
           chmod +x pawnc-3.10.10-linux/bin/pawncc
           LIBDIR=$(dirname $(find pawnc-3.10.10-linux -name "libpawnc*" | head -n1))
           export LD_LIBRARY_PATH=$LIBDIR:$LD_LIBRARY_PATH
-                    echo "=== git HEAD actuel ==="
-          git log -1 --format="%H %ci"
-          echo ""
-          echo "=== Ligne EXACTE 18650 (error 025) avec 15 lignes de contexte ==="
-          awk 'NR>=18635 && NR<=18665 { if (NR==18650) print NR": >>>> " $0; else print NR": " $0 }' gamemodes/CRP.pwn
-          echo ""
-          echo "=== Ligne EXACTE 2101 weapon-config.inc (error 035) avec contexte ==="
-          awk 'NR>=2085 && NR<=2115 { if (NR==2101) print NR": >>>> " $0; else print NR": " $0 }' deps/weaponconfig/weapon-config.inc
-          echo ""
-          echo ""
-          echo ""
-          echo ""
-          echo "=== Toutes occurrences OnAdminOfflinePrison (numeros reels) ==="
-          echo ""
-          echo ""
-          sed -i 's/DebugMessage(%1);/DebugMessage(%1) 0/' deps/weaponconfig/weapon-config.inc
-          sed -i 's/DebugMessageRed(%1);/DebugMessageRed(%1) 0/' deps/weaponconfig/weapon-config.inc
-          sed -i 's/DebugMessageAll(%1);/DebugMessageAll(%1) 0/' deps/weaponconfig/weapon-config.inc
-          sed -i 's/DebugMessageRedAll(%1);/DebugMessageRedAll(%1) 0/' deps/weaponconfig/weapon-config.inc
-          echo "=== Prototype reel OnQueryError dans les deps ==="
-          grep -rn "OnQueryError" deps/ 2>/dev/null | grep -iv "gamemodes" || echo "aucune reference trouvee"
-          echo ""
-          echo "=== Prototype reel ApplyAnimation (native) dans les deps ==="
-          grep -rn "native ApplyAnimation" deps/ 2>/dev/null || echo "aucune reference trouvee dans deps/"
-          find / -iname "a_samp.inc" 2>/dev/null | while read f; do echo "--- $f ---"; grep -n "ApplyAnimation" "$f"; done
-          echo ""
+
+          # On compile d'abord la librairie sscanf
+          cd deps/sscanf && make clean && make && cd ../..
+
+          # Commande de compilation
           ./pawnc-3.10.10-linux/bin/pawncc gamemodes/CRP.pwn \
             -i./deps/pawn-compiler/include \
             -i./deps/samp-stdlib \
@@ -377,10 +318,9 @@ jobs:
             -o./gamemodes/CRP.amx \
             -d3 -Z-
 
-       - name: Uploadcompiled .amx
-         if: success()
-         uses: actions/upload-artifact@v4
-         with:
-           name: CRP-compiled
-           path: gamemodes/CRP.amx
-
+      - name: Upload compiled .amx
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: CRP-compiled
+          path: gamemodes/CRP.amx
