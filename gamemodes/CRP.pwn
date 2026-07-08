@@ -18643,7 +18643,7 @@ public OnAdminOfflineFine(playerid, username[], amount, reason[])
 	return 1;
 }
 
-public OnQueryError(errorid, const error[], const callback[], const query[], MySQL:connectionHandle)
+public OnQueryError(errorid, const error[], const callback[], const query[], MySQL:handle)
 {
 	new
 	    File:file = fopen("mysql_error.txt", io_append);
