@@ -1906,10 +1906,7 @@ new connectionID;
 new radioConnectionID;
 new queryBuffer[1024];
 
-/////*#if defined Christmas
-	#else
-	new PlayerText:EventTextdraw[MAX_PLAYERS];
-#endif*/
+new PlayerText:EventTextdraw[MAX_PLAYERS];
 
 new YACHTMONEY[] = { 50000, 75000, 100000, 135000, 150000, 185000, 200000 };
 
@@ -7836,12 +7833,12 @@ SavePlayerWeapons(playerid)
 	{
 		// Saving weapons.
 // mysql_format(connectionID, queryBuffer, sizeof(queryBuffer), "UPDATE users SET weapon_0 = %i, weapon_1 = %i, weapon_2 = %i, weapon_3 = %i, weapon_4 = %i, weapon_5 = %i, weapon_6 = %i, weapon_7 = %i, weapon_8 = %i, weapon_9 = %i, weapon_10 = %i, weapon_11 = %i, weapon_12 = %i WHERE uid = %i",
-	        PlayerInfo[playerid][pWeapons][0], PlayerInfo[playerid][pWeapons][1], PlayerInfo[playerid][pWeapons][2], PlayerInfo[playerid][pWeapons][3], PlayerInfo[playerid][pWeapons][4], PlayerInfo[playerid][pWeapons][5], PlayerInfo[playerid][pWeapons][6], PlayerInfo[playerid][pWeapons][7], PlayerInfo[playerid][pWeapons][8], PlayerInfo[playerid][pWeapons][9], PlayerInfo[playerid][pWeapons][10], PlayerInfo[playerid][pWeapons][11], PlayerInfo[playerid][pWeapons][12], PlayerInfo[playerid][pID]);
+	        // PlayerInfo[playerid][pWeapons][0], PlayerInfo[playerid][pWeapons][1], PlayerInfo[playerid][pWeapons][2], PlayerInfo[playerid][pWeapons][3], PlayerInfo[playerid][pWeapons][4], PlayerInfo[playerid][pWeapons][5], PlayerInfo[playerid][pWeapons][6], PlayerInfo[playerid][pWeapons][7], PlayerInfo[playerid][pWeapons][8], PlayerInfo[playerid][pWeapons][9], PlayerInfo[playerid][pWeapons][10], PlayerInfo[playerid][pWeapons][11], PlayerInfo[playerid][pWeapons][12], PlayerInfo[playerid][pID]);
 // mysql_tquery(connectionID, queryBuffer);
 
 		// And finally the ammo.
 // mysql_format(connectionID, queryBuffer, sizeof(queryBuffer), "UPDATE users SET hpammo = %i, poisonammo = %i, fmjammo = %i, ammotype = %i, ammoweapon = %i WHERE uid = %i",
-		   PlayerInfo[playerid][pHPAmmo], PlayerInfo[playerid][pPoisonAmmo], PlayerInfo[playerid][pFMJAmmo], PlayerInfo[playerid][pAmmoType], PlayerInfo[playerid][pAmmoWeapon], PlayerInfo[playerid][pID]);
+		   // PlayerInfo[playerid][pHPAmmo], PlayerInfo[playerid][pPoisonAmmo], PlayerInfo[playerid][pFMJAmmo], PlayerInfo[playerid][pAmmoType], PlayerInfo[playerid][pAmmoWeapon], PlayerInfo[playerid][pID]);
 // mysql_tquery(connectionID, queryBuffer);
 	}
 }
@@ -7899,26 +7896,26 @@ public SavePlayerVariables(playerid)
 		}
 
 // mysql_format(connectionID, queryBuffer, sizeof(queryBuffer), "UPDATE users SET camera_x = '%f', camera_y = '%f', camera_z = '%f', pos_x = '%f', pos_y = '%f', pos_z = '%f', pos_a = '%f', interior = %i, world = %i, health = '%f', armor = '%f', minutes = %i, warnings = %i, injured = %i, hospital = %i, spawnhealth = '%f', spawnarmor = '%f', jailtype = %i, jailtime = %i, refunded = %i WHERE uid = %i", PlayerInfo[playerid][pCameraX], PlayerInfo[playerid][pCameraY],
-			PlayerInfo[playerid][pCameraZ], PlayerInfo[playerid][pPosX], PlayerInfo[playerid][pPosY], PlayerInfo[playerid][pPosZ], PlayerInfo[playerid][pPosA], PlayerInfo[playerid][pInterior], PlayerInfo[playerid][pWorld], PlayerInfo[playerid][pHealth], PlayerInfo[playerid][pArmor], PlayerInfo[playerid][pMinutes], PlayerInfo[playerid][pWarnings], PlayerInfo[playerid][pInjured], PlayerInfo[playerid][pHospital], PlayerInfo[playerid][pSpawnHealth],
-			PlayerInfo[playerid][pSpawnArmor], PlayerInfo[playerid][pJailType], PlayerInfo[playerid][pJailTime], PlayerInfo[playerid][pRefunded], PlayerInfo[playerid][pID]);
+			// PlayerInfo[playerid][pCameraZ], PlayerInfo[playerid][pPosX], PlayerInfo[playerid][pPosY], PlayerInfo[playerid][pPosZ], PlayerInfo[playerid][pPosA], PlayerInfo[playerid][pInterior], PlayerInfo[playerid][pWorld], PlayerInfo[playerid][pHealth], PlayerInfo[playerid][pArmor], PlayerInfo[playerid][pMinutes], PlayerInfo[playerid][pWarnings], PlayerInfo[playerid][pInjured], PlayerInfo[playerid][pHospital], PlayerInfo[playerid][pSpawnHealth],
+			// PlayerInfo[playerid][pSpawnArmor], PlayerInfo[playerid][pJailType], PlayerInfo[playerid][pJailTime], PlayerInfo[playerid][pRefunded], PlayerInfo[playerid][pID]);
 // mysql_tquery(connectionID, queryBuffer);
 
 // mysql_format(connectionID, queryBuffer, sizeof(queryBuffer), "UPDATE users SET newbiemuted = %i, helpmuted = %i, admuted = %i, livemuted = %i, globalmuted = %i, reportmuted = %i, reportwarns = %i, fightstyle = %i, ecoin = %i, dirtycash = %i, toggletextdraws = %i, toggleooc = %i, togglephone = %i, toggleadmin = %i, togglehelper = %i, togglenewbie = %i, togglewt = %i, togglevip = %i, backpack = %i, flashlight = %i, chatanim = %i WHERE uid = %i", PlayerInfo[playerid][pNewbieMuted], PlayerInfo[playerid][pHelpMuted], PlayerInfo[playerid][pAdMuted],
-			PlayerInfo[playerid][pLiveMuted], PlayerInfo[playerid][pGlobalMuted], PlayerInfo[playerid][pReportMuted], PlayerInfo[playerid][pReportWarns], PlayerInfo[playerid][pFightStyle], PlayerInfo[playerid][pEcoin], PlayerInfo[playerid][pDirtyCash], PlayerInfo[playerid][pToggleTextdraws], PlayerInfo[playerid][pToggleOOC], PlayerInfo[playerid][pTogglePhone], PlayerInfo[playerid][pToggleAdmin], PlayerInfo[playerid][pToggleHelper], PlayerInfo[playerid][pToggleNewbie], PlayerInfo[playerid][pToggleWT],
-			PlayerInfo[playerid][pToggleVIP], PlayerInfo[playerid][pBackpack], PlayerInfo[playerid][pFlashlight], PlayerInfo[playerid][pChatAnim], PlayerInfo[playerid][pID]);
+			// PlayerInfo[playerid][pLiveMuted], PlayerInfo[playerid][pGlobalMuted], PlayerInfo[playerid][pReportMuted], PlayerInfo[playerid][pReportWarns], PlayerInfo[playerid][pFightStyle], PlayerInfo[playerid][pEcoin], PlayerInfo[playerid][pDirtyCash], PlayerInfo[playerid][pToggleTextdraws], PlayerInfo[playerid][pToggleOOC], PlayerInfo[playerid][pTogglePhone], PlayerInfo[playerid][pToggleAdmin], PlayerInfo[playerid][pToggleHelper], PlayerInfo[playerid][pToggleNewbie], PlayerInfo[playerid][pToggleWT],
+			// PlayerInfo[playerid][pToggleVIP], PlayerInfo[playerid][pBackpack], PlayerInfo[playerid][pFlashlight], PlayerInfo[playerid][pChatAnim], PlayerInfo[playerid][pID]);
 // mysql_tquery(connectionID, queryBuffer);
 
 // mysql_format(connectionID, queryBuffer, sizeof(queryBuffer), "UPDATE users SET toggleradio = %i, togglemusic = %i, togglefaction = %i, togglenews = %i, toggleglobal = %i, togglecam = %i, togglehud = %i, pottime = %i, potgrams = %i, showturfs = %i, showlands = %i, watchon = %i, gpson = %i, pizzacooldown = %i, deathcooldown = %i, detectivecooldown = %i, duty = %i, bandana = %i WHERE uid = %i", PlayerInfo[playerid][pToggleRadio], PlayerInfo[playerid][pToggleMusic],
-			PlayerInfo[playerid][pToggleFaction], PlayerInfo[playerid][pToggleNews], PlayerInfo[playerid][pToggleGlobal], PlayerInfo[playerid][pToggleCam], PlayerInfo[playerid][pToggleHUD], PlayerInfo[playerid][pPotTime], PlayerInfo[playerid][pPotGrams], PlayerInfo[playerid][pShowTurfs], PlayerInfo[playerid][pShowLands], PlayerInfo[playerid][pWatchOn], PlayerInfo[playerid][pGPSOn], PlayerInfo[playerid][pPizzaCooldown], PlayerInfo[playerid][pDeathCooldown],
-			PlayerInfo[playerid][pDetectiveCooldown], PlayerInfo[playerid][pDuty], PlayerInfo[playerid][pBandana], PlayerInfo[playerid][pID]);
+			// PlayerInfo[playerid][pToggleFaction], PlayerInfo[playerid][pToggleNews], PlayerInfo[playerid][pToggleGlobal], PlayerInfo[playerid][pToggleCam], PlayerInfo[playerid][pToggleHUD], PlayerInfo[playerid][pPotTime], PlayerInfo[playerid][pPotGrams], PlayerInfo[playerid][pShowTurfs], PlayerInfo[playerid][pShowLands], PlayerInfo[playerid][pWatchOn], PlayerInfo[playerid][pGPSOn], PlayerInfo[playerid][pPizzaCooldown], PlayerInfo[playerid][pDeathCooldown],
+			// PlayerInfo[playerid][pDetectiveCooldown], PlayerInfo[playerid][pDuty], PlayerInfo[playerid][pBandana], PlayerInfo[playerid][pID]);
 // mysql_tquery(connectionID, queryBuffer);
 		// Backpack Info
 // mysql_format(connectionID, queryBuffer, sizeof(queryBuffer), "UPDATE users SET bpcash = %i, bpmaterials = %i, bppot = %i, bpcrack = %i, bpmeth = %i, bppainkillers = %i, bphpammo = %i, bppoisonammo = %i, bpfmjammo = %i, totalpatients = %i, totalfires = %i, rarecooldown = %i WHERE uid = %i", PlayerInfo[playerid][bpCash], PlayerInfo[playerid][bpMaterials], PlayerInfo[playerid][bpPot], PlayerInfo[playerid][bpCrack], PlayerInfo[playerid][bpMeth],
-			PlayerInfo[playerid][bpPainkillers], PlayerInfo[playerid][bpHPAmmo], PlayerInfo[playerid][bpPoisonAmmo], PlayerInfo[playerid][bpFMJAmmo], PlayerInfo[playerid][pTotalPatients], PlayerInfo[playerid][pTotalFires], PlayerInfo[playerid][pRareTime], PlayerInfo[playerid][pID]);
+			// PlayerInfo[playerid][bpPainkillers], PlayerInfo[playerid][bpHPAmmo], PlayerInfo[playerid][bpPoisonAmmo], PlayerInfo[playerid][bpFMJAmmo], PlayerInfo[playerid][pTotalPatients], PlayerInfo[playerid][pTotalFires], PlayerInfo[playerid][pRareTime], PlayerInfo[playerid][pID]);
 // mysql_tquery(connectionID, queryBuffer);
 		// Backpack Weapons
 // mysql_format(connectionID, queryBuffer, sizeof(queryBuffer), "UPDATE users SET bpweapon_0 = %i, bpweapon_1 = %i, bpweapon_2 = %i, bpweapon_3 = %i, bpweapon_4 = %i, bpweapon_5 = %i, bpweapon_6 = %i, bpweapon_7 = %i, bpweapon_8 = %i, bpweapon_9 = %i, bpweapon_10 = %i, bpweapon_11 = %i, bpweapon_12 = %i, bpweapon_13 = %i, bpweapon_14 = %i WHERE uid = %i", PlayerInfo[playerid][bpWeapons][0], PlayerInfo[playerid][bpWeapons][1], PlayerInfo[playerid][bpWeapons][2], PlayerInfo[playerid][bpWeapons][3],
-			PlayerInfo[playerid][bpWeapons][4], PlayerInfo[playerid][bpWeapons][5], PlayerInfo[playerid][bpWeapons][6], PlayerInfo[playerid][bpWeapons][7], PlayerInfo[playerid][bpWeapons][8], PlayerInfo[playerid][bpWeapons][9], PlayerInfo[playerid][bpWeapons][10], PlayerInfo[playerid][bpWeapons][11], PlayerInfo[playerid][bpWeapons][12], PlayerInfo[playerid][bpWeapons][13], PlayerInfo[playerid][bpWeapons][14], PlayerInfo[playerid][pID]);
+			// PlayerInfo[playerid][bpWeapons][4], PlayerInfo[playerid][bpWeapons][5], PlayerInfo[playerid][bpWeapons][6], PlayerInfo[playerid][bpWeapons][7], PlayerInfo[playerid][bpWeapons][8], PlayerInfo[playerid][bpWeapons][9], PlayerInfo[playerid][bpWeapons][10], PlayerInfo[playerid][bpWeapons][11], PlayerInfo[playerid][bpWeapons][12], PlayerInfo[playerid][bpWeapons][13], PlayerInfo[playerid][bpWeapons][14], PlayerInfo[playerid][pID]);
 // mysql_tquery(connectionID, queryBuffer);
 
 // mysql_format(connectionID, queryBuffer, sizeof(queryBuffer), "UPDATE users SET hunger = %i, hungertimer = %i, thirst = %i, thirsttimer = %i, covid = %i, covidtimer = %i, Lottery = %i, LotteryB = %i, comserv = %i where uid = %d", PlayerInfo[playerid][pHunger], PlayerInfo[playerid][pHungerTimer], PlayerInfo[playerid][pThirst], PlayerInfo[playerid][pThirstTimer], PlayerInfo[playerid][pCovid], PlayerInfo[playerid][pCovidTimer], PlayerInfo[playerid][pLottery],PlayerInfo[playerid][pLotteryB],PlayerInfo[playerid][pComserv],PlayerInfo[playerid][pID]);
@@ -62196,7 +62193,7 @@ CMD:createhouse(playerid, params[])
 	    if(!HouseInfo[i][hExists])
 	    {
 // mysql_format(connectionID, queryBuffer, sizeof(queryBuffer), "INSERT INTO houses (type, price, pos_x, pos_y, pos_z, pos_a, int_x, int_y, int_z, int_a, interior, outsideint, outsidevw) VALUES(%i, %i, '%f', '%f', '%f', '%f', '%f', '%f', '%f', '%f', %i, %i, %i)", type, houseInteriors[type][intPrice], x, y, z, a - 180.0,
-				houseInteriors[type][intX], houseInteriors[type][intY], houseInteriors[type][intZ], houseInteriors[type][intA], houseInteriors[type][intID], GetPlayerInterior(playerid), GetPlayerVirtualWorld(playerid));
+				// houseInteriors[type][intX], houseInteriors[type][intY], houseInteriors[type][intZ], houseInteriors[type][intA], houseInteriors[type][intID], GetPlayerInterior(playerid), GetPlayerVirtualWorld(playerid));
 // mysql_tquery(connectionID, queryBuffer, "OnAdminCreateHouse", "iiiffff", playerid, i, type, x, y, z, a);
 			return 1;
 		}
@@ -65856,7 +65853,7 @@ CMD:createbiz(playerid, params[])
 	    if(!BusinessInfo[i][bExists])
 	    {
 // mysql_format(connectionID, queryBuffer, sizeof(queryBuffer), "INSERT INTO businesses (type, price, pos_x, pos_y, pos_z, pos_a, int_x, int_y, int_z, int_a, interior, outsideint, outsidevw) VALUES(%i, %i, '%f', '%f', '%f', '%f', '%f', '%f', '%f', '%f', %i, %i, %i)", type, bizInteriors[type][intPrice], x, y, z, a - 180.0,
-				bizInteriors[type][intX], bizInteriors[type][intY], bizInteriors[type][intZ], bizInteriors[type][intA], bizInteriors[type][intID], GetPlayerInterior(playerid), GetPlayerVirtualWorld(playerid));
+				// bizInteriors[type][intX], bizInteriors[type][intY], bizInteriors[type][intZ], bizInteriors[type][intA], bizInteriors[type][intID], GetPlayerInterior(playerid), GetPlayerVirtualWorld(playerid));
 // mysql_tquery(connectionID, queryBuffer, "OnAdminCreateBusiness", "iiiffff", playerid, i, type, x, y, z, a);
 			return 1;
 		}
