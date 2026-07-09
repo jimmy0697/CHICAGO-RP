@@ -29,16 +29,23 @@ jobs:
           git clone --depth 1 https://github.com/emmet-jones/New-SA-MP-callbacks.git deps/callbacks
           git clone --depth 1 https://github.com/oscar-broman/SKY.git deps/sky
           git clone --depth 1 https://github.com/oscar-broman/samp-weapon-config.git deps/weaponconfig
-      - name: Patch weapon-config.inc
-        run: |
-          python3 -c "import re
-          with open('deps/weaponconfig/weapon-config.inc','r') as f:
-          c=f.read()
-          c=re.sub(r'for\s*\([^)]*\)\s*;\s*',lambda m: m.group().rstrip('; ')+' {}\n',c)
-          c=re.sub(r'^[ \t]*;[ \t]*\n','',c,flags=re.MULTILINE)
-          with open('deps/weaponconfig/weapon-config.inc','w') as f:
-          f.write(c)"
+          - name: Patch weapon-config.inc
+          run: |
+          python3 << 'EOF'
+          import re
+          with open('deps/weaponconfig/weapon-config.inc', 'r') as f:
+          content = f.read()
+          content = re.sub(r'^[ \t]*;[ \t]*\n', '', content, flags=re.MULTILINE)
+          content = re.sub(r'for\s*\([^)]*\)\s*;\s*', lambda m: m.group().rstrip('; ') + ' {}\n', content)
+          content = re.sub(r'while\s*\([^)]*\)\s*;\s*', lambda m: m.group().rstrip('; ') + ' {}\n', content)
+          content = re.sub(r'SetPlayerHealth\(([^,]+),\s*(\d+)\)', r'SetPlayerHealth(\1, Float:\2)', content)
+          content = re.sub(r'SetPlayerArmour\(([^,]+),\s*(\d+)\)', r'SetPlayerArmour(\1, Float:\2)', content)
+          with open('deps/weaponconfig/weapon-config.inc', 'w') as f:
+          f.write(content)
+          print('Patch OK')
+          EOF
       - name: Compile gamemode
+
         run: |
           chmod +x pawnc-3.10.10-linux/bin/pawncc
           LIBDIR=$(dirname $(find pawnc-3.10.10-linux -name "libpawnc*" | head -n1))
