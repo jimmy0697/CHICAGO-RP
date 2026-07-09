@@ -29,7 +29,12 @@ jobs:
           git clone --depth 1 https://github.com/alextwothousand/mSelection.git deps/mselection
           git clone --depth 1 https://github.com/emmet-jones/New-SA-MP-callbacks.git deps/callbacks
           git clone --depth 1 https://github.com/oscar-broman/SKY.git deps/sky
-          git clone --depth 1 https://github.com/BrasilNewStart/samp-weapon-config.git deps/weaponconfig
+          git clone --depth 1 https://github.com/oscar-broman/samp-weapon-config.git deps/weaponconfig
+      - name: Patch weapon-config.inc for Pawn 3.10.10
+        run: |
+          sed -i 's/for (new i = 0; i < sizeof(g_PlayerWeapon\[i\]); i++);/for (new i = 0; i < sizeof(g_PlayerWeapon[]); i++)/' deps/weaponconfig/weapon-config.inc
+          sed -i 's/for (new i = 0; i < MAX_PLAYERS; i++);/for (new i = 0; i < MAX_PLAYERS; i++)/' deps/weaponconfig/weapon-config.inc
+          sed -i 's/for (new i = 0; i < MAX_PLAYERS; i++) ;/for (new i = 0; i < MAX_PLAYERS; i++)/' deps/weaponconfig/weapon-config.inc
       - name: Compile gamemode
         run: |
           chmod +x pawnc-3.10.10-linux/bin/pawncc
