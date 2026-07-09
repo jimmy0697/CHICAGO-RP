@@ -55,6 +55,10 @@ jobs:
           grep -rn "native ApplyAnimation\|#define ApplyAnimation" . 2>/dev/null
           echo "=== Definition de CB_ApplyAnimation ==="
           grep -n -A5 "CB_ApplyAnimation" deps/callbacks/callbacks.inc | head -30
+          echo "=== Definition complete de CB_ApplyAnimation (stock/public/forward) ==="
+          grep -n -B2 -A15 "stock CB_ApplyAnimation\|forward CB_ApplyAnimation\|public CB_ApplyAnimation" deps/callbacks/callbacks.inc
+          echo "=== Recherche pattern ALS (hook systeme) pour ApplyAnimation ==="
+          grep -n "_ALS_ApplyAnimation\|ALS_ApplyAnimation" deps/callbacks/callbacks.inc
           echo "=== Ordre des includes callbacks / weaponconfig dans CRP.pwn ==="
           grep -n "#include" gamemodes/CRP.pwn | grep -iE "callback|weapon"
           echo "=== Recherche du coupable exact desequilibre accolades ==="
