@@ -19,11 +19,10 @@ jobs:
           git clone --depth 1 https://github.com/pawn-lang/samp-stdlib.git deps/samp-stdlib
           git clone --depth 1 https://github.com/pawn-lang/compiler.git deps/pawn-compiler
           MYSQL_URL=$(curl -s https://api.github.com/repos/pBlueG/SA-MP-MySQL/releases/latest | jq -r '.assets[].browser_download_url' | grep -iE 'debian|linux' | grep -viE 'win|exe' | head -n1)
-          if [ -z "$MYSQL_URL" ]; then echo "ERREUR MySQL"; exit 1; fi
+          if [ -z "$MYSQL_URL" ]; then echo "ERREUR: impossible de trouver MySQL"; exit 1; fi
           mkdir -p deps/mysql
           wget -q "$MYSQL_URL" -O mysql.tar.gz
           tar --strip-components=1 -xzf mysql.tar.gz -C deps/mysql
-          git clone --depth 1 https://github.com/Y-Less/SAMP-foreach.git deps/foreach
           git clone --depth 1 https://github.com/Y-Less/sscanf.git deps/sscanf
           git clone --depth 1 https://github.com/samp-incognito/samp-streamer-plugin.git deps/streamer
           git clone --depth 1 https://github.com/katursis/Pawn.CMD.git deps/pawncmd
@@ -32,57 +31,6 @@ jobs:
           git clone --depth 1 https://github.com/emmet-jones/New-SA-MP-callbacks.git deps/callbacks
           git clone --depth 1 https://github.com/oscar-broman/SKY.git deps/sky
           git clone --depth 1 https://github.com/oscar-broman/samp-weapon-config.git deps/weaponconfig
-          sed -i 's/DebugMessage(%1);/DebugMessage(%1) 0/' deps/weaponconfig/weapon-config.inc
-          sed -i 's/DebugMessageRed(%1);/DebugMessageRed(%1) 0/' deps/weaponconfig/weapon-config.inc
-          sed -i 's/DebugMessageAll(%1);/DebugMessageAll(%1) 0/' deps/weaponconfig/weapon-config.inc
-          sed -i 's/DebugMessageRedAll(%1);/DebugMessageRedAll(%1) 0/' deps/weaponconfig/weapon-config.inc
-
-      - name: Wrapper compatibilite
-        run: |
-          cat > deps/mysql/pawno/include/mysql_compat.inc << 'COMPAT_EOF'
-          #if defined _mysql_compat_included
-            #endinput
-          #endif
-          #define _mysql_compat_included
-          stock cache_get_row_int(row, col) { new dest; cache_get_value_index_int(row, col, dest); return dest; }
-          stock cache_get_row(row, col, dest[], size = sizeof dest) { cache_get_value_index(row, col, dest, size); return 1; }
-          stock cache_get_field_content(row, const field[], dest[], connectionHandle = 1, max_len = 128) {
-              new fields = cache_get_field_count(); new name[64];
-              for (new i = 0; i < fields; i++) { cache_get_field_name(i, name); if (!strcmp(name, field)) { return cache_get_value_index(row, i, dest, max_len); } }
-              dest[0] = 0; return 0;
-          }
-          COMPAT_EOF
-          sed -i "/a_mysql/a #include <mysql_compat>" gamemodes/CRP.pwn
-
-      - name: Fixes supplementaires
-        run: |
-          cat >> deps/mysql/pawno/include/mysql_compat.inc << 'COMPAT_EOF'
-          stock mysql_real_escape_string(const source[], destination[], connectionHandle = 1, max_len = sizeof destination) {
-              return mysql_escape_string(source, destination, connectionHandle, max_len);
-          }
-          stock IsPlayerSpawned(playerid) { return GetPlayerState(playerid) == PLAYER_STATE_SPAWNED; }
-          COMPAT_EOF
-
-          sed -i "/^[[:space:]]*native[[:space:]]\+IsValidVehicle[[:space:]]*(/d" gamemodes/CRP.pwn
-
-          cat > deps/samp-stdlib/floatstr_compat.inc << 'FLOAT_EOF'
-          #if defined _floatstr_compat_included
-            #endinput
-          #endif
-          #define _floatstr_compat_included
-          #if !defined floatstr
-          stock Float:floatstr(const string[]) {
-              new i = 0, sign = 1, integer_part = 0, decimal_part = 0, decimal_digits = 0;
-              if (string[i] == '-') { sign = -1; i++; } else if (string[i] == '+') { i++; }
-              while (string[i] >= '0' && string[i] <= '9') { integer_part = integer_part * 10 + (string[i] - '0'); i++; }
-              if (string[i] == '.') { i++; while (string[i] >= '0' && string[i] <= '9') { decimal_part = decimal_part * 10 + (string[i] - '0'); decimal_digits++; i++; } }
-              new Float:result = float(integer_part);
-              if (decimal_digits > 0) { new Float:divisor = 1.0; for (new d = 0; d < decimal_digits; d++) divisor *= 10.0; result += float(decimal_part) / divisor; }
-              return float(sign) * result;
-          }
-          #endif
-          FLOAT_EOF
-          sed -i "/#include <a_samp>/a #include <floatstr_compat>" gamemodes/CRP.pwn
 
       - name: Compile gamemode
         run: |
@@ -93,7 +41,6 @@ jobs:
             -i./deps/pawn-compiler/include \
             -i./deps/samp-stdlib \
             -i./deps/mysql/pawno/include \
-            -i./deps/foreach \
             -i./deps/sscanf \
             -i./deps/sscanf/include \
             -i./deps/streamer \
