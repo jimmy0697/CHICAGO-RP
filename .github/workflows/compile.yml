@@ -17,7 +17,6 @@ jobs:
           curl -s -L -o deps/weaponconfig/weapon-config.inc https://raw.githubusercontent.com/oscar-broman/samp-weapon-config/master/weapon-config.inc
           sed -i 's/\r$//g' deps/weaponconfig/weapon-config.inc
           sed -i 's/^[ \t]*;[ \t]*$//g' deps/weaponconfig/weapon-config.inc
-          sed -i '1i#pragma semicolon 1' deps/weaponconfig/weapon-config.inc
       - name: Clone dependencies
         run: |
           git clone --depth 1 https://github.com/pawn-lang/samp-stdlib.git deps/samp-stdlib
@@ -36,7 +35,7 @@ jobs:
           chmod +x pawnc-3.10.10-linux/bin/pawncc
           LIBDIR=$(dirname $(find pawnc-3.10.10-linux -name "libpawnc*" | head -n1))
           export LD_LIBRARY_PATH=$LIBDIR:$LD_LIBRARY_PATH
-          ./pawnc-3.10.10-linux/bin/pawncc gamemodes/CRP.pwn -w214 -w239 -w218 -w203 -w225 \
+          ./pawnc-3.10.10-linux/bin/pawncc gamemodes/CRP.pwn \
             -i./deps/pawn-compiler/include \
             -i./deps/samp-stdlib \
             -i./deps/mysql/pawno/include \
@@ -53,7 +52,7 @@ jobs:
             -i./deps/weaponconfig \
             -i./include \
             -o./gamemodes/CRP.amx \
-            -d3 -Z- -;+
+            -d3 -Z-
       - name: Upload compiled .amx
         if: success()
         uses: actions/upload-artifact@v4
