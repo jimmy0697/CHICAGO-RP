@@ -10,18 +10,19 @@ jobs:
         run: |
           wget -q https://github.com/pawn-lang/compiler/releases/download/v3.10.10/pawnc-3.10.10-linux.tar.gz
           tar -xzf pawnc-3.10.10-linux.tar.gz
-      - name: Setup includes
+      - name: Download foreach.inc
         run: |
-          mkdir -p include deps/weaponconfig deps/mysql/pawno/include
+          mkdir -p include
           curl -s -L -o include/foreach.inc https://raw.githubusercontent.com/Y-Less/SAMP-foreach/master/foreach.inc
-          curl -s -L -o deps/weaponconfig/weapon-config.inc https://raw.githubusercontent.com/oscar-broman/samp-weapon-config/master/weapon-config.inc
-          curl -s -L -o deps/mysql/pawno/include/a_mysql.inc https://raw.githubusercontent.com/pBlueG/SA-MP-MySQL/main/pawno/include/a_mysql.inc
-          sed -i 's/\r$//g' deps/weaponconfig/weapon-config.inc
-          sed -i 's/^[ \t]*;[ \t]*$//g' deps/weaponconfig/weapon-config.inc
       - name: Clone dependencies
         run: |
           git clone --depth 1 https://github.com/pawn-lang/samp-stdlib.git deps/samp-stdlib
           git clone --depth 1 https://github.com/pawn-lang/compiler.git deps/pawn-compiler
+          MYSQL_URL=$(curl -s https://api.github.com/repos/pBlueG/SA-MP-MySQL/releases/latest | jq -r '.assets[].browser_download_url' | grep -iE 'debian|linux' | grep -viE 'win|exe' | head -n1)
+          if [ -z "$MYSQL_URL" ]; then echo "ERREUR: impossible de trouver MySQL"; exit 1; fi
+          mkdir -p deps/mysql
+          wget -q "$MYSQL_URL" -O mysql.tar.gz
+          tar --strip-components=1 -xzf mysql.tar.gz -C deps/mysql
           git clone --depth 1 https://github.com/Y-Less/sscanf.git deps/sscanf
           git clone --depth 1 https://github.com/samp-incognito/samp-streamer-plugin.git deps/streamer
           git clone --depth 1 https://github.com/katursis/Pawn.CMD.git deps/pawncmd
@@ -29,6 +30,7 @@ jobs:
           git clone --depth 1 https://github.com/alextwothousand/mSelection.git deps/mselection
           git clone --depth 1 https://github.com/emmet-jones/New-SA-MP-callbacks.git deps/callbacks
           git clone --depth 1 https://github.com/oscar-broman/SKY.git deps/sky
+          git clone --depth 1 https://github.com/oscar-broman/samp-weapon-config.git deps/weaponconfig
       - name: Compile gamemode
         run: |
           chmod +x pawnc-3.10.10-linux/bin/pawncc
