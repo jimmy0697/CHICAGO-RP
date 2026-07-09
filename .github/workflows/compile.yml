@@ -308,44 +308,35 @@ jobs:
 
           set -e
 
-      - name: Fix ordre includes (callbacks apres weapon-config)
+      - name: Fix macro ApplyAnimation autour de weapon-config
         run: |
           echo "=== Avant correction ==="
-          grep -n "#include" gamemodes/CRP.pwn | grep -iE "callback|weapon|sky"
+          grep -n "#include\|#undef ApplyAnimation\|#define ApplyAnimation" gamemodes/CRP.pwn | grep -iE "callback|weapon|sky|applyanimation"
 
-          cat > /tmp/fix_include_order.py << 'FIXORDER_EOF'
+          cat > /tmp/fix_applyanimation_macro.py << 'FIXMACRO_EOF'
           with open('gamemodes/CRP.pwn', 'r', encoding='utf-8', errors='replace') as f:
               lines = f.readlines()
 
-          idx_callbacks = None
+          idx_wc = None
           for i, l in enumerate(lines):
-              if l.strip() == '#include <callbacks>':
-                  idx_callbacks = i
+              if l.strip().startswith('#include <weapon-config>'):
+                  idx_wc = i
                   break
 
-          if idx_callbacks is None:
-              print('ERREUR: #include <callbacks> introuvable, aucune modification.')
+          if idx_wc is None:
+              print('ERREUR: #include <weapon-config> introuvable, aucune modification.')
           else:
-              line = lines.pop(idx_callbacks)
-              inserted = False
-              for i, l in enumerate(lines):
-                  if l.strip().startswith('#include <weapon-config>'):
-                      lines.insert(i + 1, line)
-                      inserted = True
-                      break
-              if not inserted:
-                  print('ERREUR: #include <weapon-config> introuvable, insertion annulee.')
-                  lines.insert(idx_callbacks, line)
-              else:
-                  print('OK: #include <callbacks> deplace apres #include <weapon-config>.')
-                  with open('gamemodes/CRP.pwn', 'w', encoding='utf-8') as f:
-                      f.writelines(lines)
-          FIXORDER_EOF
-          python3 /tmp/fix_include_order.py
+              lines.insert(idx_wc, '#undef ApplyAnimation\n')
+              lines.insert(idx_wc + 2, '#define ApplyAnimation CB_ApplyAnimation\n')
+              with open('gamemodes/CRP.pwn', 'w', encoding='utf-8') as f:
+                  f.writelines(lines)
+              print('OK: #undef/#define ApplyAnimation ajoutes autour de #include <weapon-config>.')
+          FIXMACRO_EOF
+          python3 /tmp/fix_applyanimation_macro.py
 
           echo ""
           echo "=== Apres correction ==="
-          grep -n "#include" gamemodes/CRP.pwn | grep -iE "callback|weapon|sky"
+          grep -n "#include\|#undef ApplyAnimation\|#define ApplyAnimation" gamemodes/CRP.pwn | grep -iE "callback|weapon|sky|applyanimation"
 
       - name: Compile gamemode
         run: |
