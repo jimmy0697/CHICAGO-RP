@@ -47,6 +47,8 @@ jobs:
           sed -n '2085,2115p' deps/weaponconfig/weapon-config.inc
           echo "=== Definition de WC_CONST ==="
           grep -n -A3 "define WC_CONST" deps/weaponconfig/weapon-config.inc
+          echo "=== Contexte complet condition WC_CONST (lignes 143-155) ==="
+          sed -n '143,155p' deps/weaponconfig/weapon-config.inc
           echo "=== Signature native ApplyAnimation ==="
           grep -rn "native ApplyAnimation" deps/samp-stdlib/ deps/pawn-compiler/include/ 2>/dev/null
           echo "=== Recherche du coupable exact desequilibre accolades ==="
