@@ -30,7 +30,8 @@ jobs:
           git clone --depth 1 https://github.com/oscar-broman/SKY.git deps/sky
           git clone --depth 1 https://github.com/oscar-broman/samp-weapon-config.git deps/weaponconfig
       - name: Patch weapon-config.inc
-        run: python3 -c "import re;f=open('deps/weaponconfig/weapon-config.inc','r');c=f.read();f.close();c=re.sub(r'^[ \t]*;[ \t]*\n','',c,flags=re.MULTILINE);c=re.sub(r'for\s*\([^)]*\)\s*;\s*',lambda m: m.group().rstrip('; ')+' {}\n',c);open('deps/weaponconfig/weapon-config.inc','w').write(c);print('Patch OK')"
+        run: |
+          python3 -c "import re;f=open('deps/weaponconfig/weapon-config.inc','r');c=f.read();f.close();c=re.sub(r'^[ \t]*;[ \t]*\n','',c,flags=re.MULTILINE);c=re.sub(r'for\s*\([^)]*\)\s*;\s*',lambda m: m.group().rstrip('; ')+' {}\n',c);open('deps/weaponconfig/weapon-config.inc','w').write(c);print('Patch OK')"
       - name: Compile gamemode
         run: |
           chmod +x pawnc-3.10.10-linux/bin/pawncc
