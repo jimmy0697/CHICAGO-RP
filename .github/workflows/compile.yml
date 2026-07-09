@@ -10,9 +10,24 @@ jobs:
         run: |
           wget -q https://github.com/pawn-lang/compiler/releases/download/v3.10.10/pawnc-3.10.10-linux.tar.gz
           tar -xzf pawnc-3.10.10-linux.tar.gz
-      - name: Download standalone foreach.inc
+      - name: Download includes
         run: |
+          mkdir -p include deps/weaponconfig
           curl -o include/foreach.inc https://raw.githubusercontent.com/Y-Less/SAMP-foreach/master/foreach.inc
+          curl -o deps/weaponconfig/weapon-config.inc https://raw.githubusercontent.com/oscar-broman/samp-weapon-config/master/weapon-config.inc
+      - name: Patch weapon-config for Pawn 3.10
+        run: |
+          cd deps/weaponconfig
+          # Remove ALL lines that are ONLY a semicolon (the empty statement fix)
+          perl -i -pe 's/^[ \t]*;[ \t]*\n//g' weapon-config.inc
+          # Fix for(;;); patterns (for loop with immediate semicolon = empty body)
+          perl -i -pe 's/for\s*\([^)]*\)\s*;\s*\{?[ \t]*\n/for (new i = 0; i < MAX_PLAYERS; i++) {\n}\n/g' weapon-config.inc
+          # Fix while(); patterns
+          perl -i -pe 's/while\s*\([^)]*\)\s*;\s*/while (true) {}\n/g' weapon-config.inc
+          # Fix SetPlayerHealth with integer instead of Float
+          perl -i -pe 's/SetPlayerHealth\(([^,]+),\s*(\d+)\)/SetPlayerHealth($1, Float:$2)/g' weapon-config.inc
+          perl -i -pe 's/SetPlayerArmour\(([^,]+),\s*(\d+)\)/SetPlayerArmour($1, Float:$2)/g' weapon-config.inc
+          cd ../..
       - name: Clone dependencies
         run: |
           git clone --depth 1 https://github.com/pawn-lang/samp-stdlib.git deps/samp-stdlib
@@ -29,20 +44,6 @@ jobs:
           git clone --depth 1 https://github.com/alextwothousand/mSelection.git deps/mselection
           git clone --depth 1 https://github.com/emmet-jones/New-SA-MP-callbacks.git deps/callbacks
           git clone --depth 1 https://github.com/oscar-broman/SKY.git deps/sky
-          git clone --depth 1 https://github.com/oscar-broman/samp-weapon-config.git deps/weaponconfig
-      - name: Patch weapon-config for Pawn 3.10
-        run: |
-          cd deps/weaponconfig
-          # Fix "for" loops ending with semicolons (empty statement)
-          sed -i 's/for (new i = 0; i < .*; i++);/for (new i = 0; i < MAX_PLAYERS; i++)/g' weapon-config.inc
-          # Fix "while" loops ending with semicolons
-          sed -i 's/while (.*);/while (\1){}/g' weapon-config.inc
-          # Remove lines that are ONLY a semicolon (empty statements)
-          sed -i '/^[[:space:]]*;[[:space:]]*$/d' weapon-config.inc
-          # Fix function calls with tag mismatch - add Float: cast where needed
-          sed -i 's/SetPlayerHealth(playerid, \([0-9]\+\));/SetPlayerHealth(playerid, Float:\1);/g' weapon-config.inc
-          sed -i 's/SetPlayerArmour(playerid, \([0-9]\+\));/SetPlayerArmour(playerid, Float:\1);/g' weapon-config.inc
-          cd ../..
       - name: Compile gamemode
         run: |
           chmod +x pawnc-3.10.10-linux/bin/pawncc
