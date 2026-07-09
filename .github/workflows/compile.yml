@@ -19,7 +19,7 @@ jobs:
           git clone --depth 1 https://github.com/pawn-lang/samp-stdlib.git deps/samp-stdlib
           git clone --depth 1 https://github.com/pawn-lang/compiler.git deps/pawn-compiler
           MYSQL_URL=$(curl -s https://api.github.com/repos/pBlueG/SA-MP-MySQL/releases/latest | jq -r '.assets[].browser_download_url' | grep -iE 'debian|linux' | grep -viE 'win|exe' | head -n1)
-          if [ -z "$MYSQL_URL" ]; then echo "ERREUR: impossible de trouver MySQL"; exit 1; fi
+          if [ -z "$MYSQL_URL" ]; then echo "ERREUR"; exit 1; fi
           mkdir -p deps/mysql && wget -q "$MYSQL_URL" -O mysql.tar.gz && tar --strip-components=1 -xzf mysql.tar.gz -C deps/mysql
           git clone --depth 1 https://github.com/Y-Less/sscanf.git deps/sscanf
           git clone --depth 1 https://github.com/samp-incognito/samp-streamer-plugin.git deps/streamer
@@ -30,20 +30,7 @@ jobs:
           git clone --depth 1 https://github.com/oscar-broman/SKY.git deps/sky
           git clone --depth 1 https://github.com/oscar-broman/samp-weapon-config.git deps/weaponconfig
       - name: Patch weapon-config.inc
-        run: |
-          python3 << 'EOF'
-          import re
-          with open('deps/weaponconfig/weapon-config.inc', 'r') as f:
-          content = f.read()
-          content = re.sub(r'^[ \t]*;[ \t]*\n', '', content, flags=re.MULTILINE)
-          content = re.sub(r'for\s*\([^)]*\)\s*;\s*', lambda m: m.group().rstrip('; ') + ' {}\n', content)
-          content = re.sub(r'while\s*\([^)]*\)\s*;\s*', lambda m: m.group().rstrip('; ') + ' {}\n', content)
-          content = re.sub(r'SetPlayerHealth\(([^,]+),\s*(\d+)\)', r'SetPlayerHealth(\1, Float:\2)', content)
-          content = re.sub(r'SetPlayerArmour\(([^,]+),\s*(\d+)\)', r'SetPlayerArmour(\1, Float:\2)', content)
-          with open('deps/weaponconfig/weapon-config.inc', 'w') as f:
-          f.write(content)
-          print('Patch OK')
-          EOF
+        run: python3 -c "import re;f=open('deps/weaponconfig/weapon-config.inc','r');c=f.read();f.close();c=re.sub(r'^[ \t]*;[ \t]*\n','',c,flags=re.MULTILINE);c=re.sub(r'for\s*\([^)]*\)\s*;\s*',lambda m: m.group().rstrip('; ')+' {}\n',c);open('deps/weaponconfig/weapon-config.inc','w').write(c);print('Patch OK')"
       - name: Compile gamemode
         run: |
           chmod +x pawnc-3.10.10-linux/bin/pawncc
@@ -73,4 +60,3 @@ jobs:
         with:
           name: CRP-compiled
           path: gamemodes/CRP.amx
-
