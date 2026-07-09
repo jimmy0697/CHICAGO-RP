@@ -1,0 +1,60 @@
+name: compile
+on: [push]
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Download pawncc 3.10.10
+        run: |
+          wget -q https://github.com/pawn-lang/compiler/releases/download/v3.10.10/pawnc-3.10.10-linux.tar.gz
+          tar -xzf pawnc-3.10.10-linux.tar.gz
+      - name: Download foreach.inc
+        run: |
+          mkdir -p include
+          curl -s -L -o include/foreach.inc https://raw.githubusercontent.com/Y-Less/SAMP-foreach/master/foreach.inc
+      - name: Clone dependencies
+        run: |
+          git clone --depth 1 https://github.com/pawn-lang/samp-stdlib.git deps/samp-stdlib
+          git clone --depth 1 https://github.com/pawn-lang/compiler.git deps/pawn-compiler
+          MYSQL_URL=$(curl -s https://api.github.com/repos/pBlueG/SA-MP-MySQL/releases/latest | jq -r '.assets[].browser_download_url' | grep -iE 'debian|linux' | grep -viE 'win|exe' | head -n1)
+          if [ -z "$MYSQL_URL" ]; then echo "ERREUR"; exit 1; fi
+          mkdir -p deps/mysql && wget -q "$MYSQL_URL" -O mysql.tar.gz && tar --strip-components=1 -xzf mysql.tar.gz -C deps/mysql
+          git clone --depth 1 https://github.com/Y-Less/sscanf.git deps/sscanf
+          git clone --depth 1 https://github.com/samp-incognito/samp-streamer-plugin.git deps/streamer
+          git clone --depth 1 https://github.com/katursis/Pawn.CMD.git deps/pawncmd
+          git clone --depth 1 https://github.com/AmyrAhmady/sampvoice.git deps/sampvoice
+          git clone --depth 1 https://github.com/alextwothousand/mSelection.git deps/mselection
+          git clone --depth 1 https://github.com/emmet-jones/New-SA-MP-callbacks.git deps/callbacks
+          git clone --depth 1 https://github.com/oscar-broman/SKY.git deps/sky
+          git clone --depth 1 https://github.com/oscar-broman/samp-weapon-config.git deps/weaponconfig
+      - name: Compile gamemode
+        run: |
+          chmod +x pawnc-3.10.10-linux/bin/pawncc
+          LIBDIR=$(dirname $(find pawnc-3.10.10-linux -name "libpawnc*" | head -n1))
+          export LD_LIBRARY_PATH=$LIBDIR:$LD_LIBRARY_PATH
+          ./pawnc-3.10.10-linux/bin/pawncc gamemodes/CRP.pwn \
+            -i./deps/pawn-compiler/include \
+            -i./deps/samp-stdlib \
+            -i./deps/mysql/pawno/include \
+            -i./deps/sscanf \
+            -i./deps/sscanf/include \
+            -i./deps/streamer \
+            -i./deps/streamer/include \
+            -i./deps/pawncmd/src \
+            -i./deps/sampvoice/server \
+            -i./deps/mselection \
+            -i./deps/callbacks \
+            -i./deps/sky \
+            -i./deps/sky/include \
+            -i./deps/weaponconfig \
+            -i./include \
+            -o./gamemodes/CRP.amx \
+            -d3 -Z-
+      - name: Upload compiled .amx
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: CRP-compiled
+          path: gamemodes/CRP.amx
