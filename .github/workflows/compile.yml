@@ -1,19 +1,15 @@
 name: compile
-
 on: [push]
-
 jobs:
   compile:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-
       - name: Download pawncc 3.10.10
         run: |
           wget -q https://github.com/pawn-lang/compiler/releases/download/v3.10.10/pawnc-3.10.10-linux.tar.gz
           tar -xzf pawnc-3.10.10-linux.tar.gz
-
       - name: Clone dependencies
         run: |
           git clone --depth 1 https://github.com/pawn-lang/samp-stdlib.git deps/samp-stdlib
@@ -31,7 +27,7 @@ jobs:
           git clone --depth 1 https://github.com/emmet-jones/New-SA-MP-callbacks.git deps/callbacks
           git clone --depth 1 https://github.com/oscar-broman/SKY.git deps/sky
           git clone --depth 1 https://github.com/oscar-broman/samp-weapon-config.git deps/weaponconfig
-
+          git clone --depth 1 https://github.com/pawn-lang/YSI-Includes.git deps/YSI-Includes
       - name: Compile gamemode
         run: |
           chmod +x pawnc-3.10.10-linux/bin/pawncc
@@ -52,10 +48,10 @@ jobs:
             -i./deps/sky \
             -i./deps/sky/include \
             -i./deps/weaponconfig \
+            -i./deps/YSI-Includes \
             -i./include \
             -o./gamemodes/CRP.amx \
             -d3 -Z-
-
       - name: Upload compiled .amx
         if: success()
         uses: actions/upload-artifact@v4
