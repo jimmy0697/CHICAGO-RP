@@ -338,6 +338,9 @@ jobs:
           echo "=== Apres correction ==="
           grep -n "#include\|#undef ApplyAnimation\|#define ApplyAnimation" gamemodes/CRP.pwn | grep -iE "callback|weapon|sky|applyanimation"
 
+          echo "=== Contexte weapon-config.inc lignes 7400-7430 ==="
+          sed -n '7400,7430p' deps/weaponconfig/weapon-config.inc
+
       - name: Compile gamemode
         run: |
           chmod +x pawnc-3.10.10-linux/bin/pawncc
