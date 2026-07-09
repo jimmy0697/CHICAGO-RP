@@ -38,7 +38,6 @@ jobs:
           git clone --depth 1 https://github.com/emmet-jones/New-SA-MP-callbacks.git deps/callbacks
           git clone --depth 1 https://github.com/oscar-broman/SKY.git deps/sky
           git clone --depth 1 https://github.com/oscar-broman/samp-weapon-config.git deps/weaponconfig
-          sed -i '1i #define SAMP_CONST_CORRECT' deps/weaponconfig/weapon-config.inc
           sed -i 's/DebugMessage(%1);/DebugMessage(%1) 0/' deps/weaponconfig/weapon-config.inc
           sed -i 's/DebugMessageRed(%1);/DebugMessageRed(%1) 0/' deps/weaponconfig/weapon-config.inc
           sed -i 's/DebugMessageAll(%1);/DebugMessageAll(%1) 0/' deps/weaponconfig/weapon-config.inc
